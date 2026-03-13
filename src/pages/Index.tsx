@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
@@ -141,9 +141,31 @@ const Index: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
   const [likingId, setLikingId] = useState<string | null>(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "VC";
   const fullName = user?.user_metadata?.full_name || "Você";
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [isLoadingMore]);
 
   const cardStyle = highContrast
     ? "border-2 border-primary bg-background shadow-none"
@@ -411,10 +433,10 @@ const Index: React.FC = () => {
           ))}
         </AnimatePresence>
 
-        {/* Loading Skeletons */}
-        {isLoadingMore ? (
-          <div className="space-y-4">
-            {[1, 2].map(i => (
+        {/* Loading Skeletons or Sentinel */}
+        <div ref={observerTarget} className="space-y-4 pt-4">
+          {isLoadingMore ? (
+            [1, 2].map(i => (
               <Card key={i} className={cn("p-4", cardStyle)}>
                 <div className="flex gap-3 mb-4">
                   <div className="h-10 w-10 rounded-xl skeleton" />
@@ -429,17 +451,15 @@ const Index: React.FC = () => {
                 </div>
                 <div className="h-40 w-full rounded-2xl skeleton" />
               </Card>
-            ))}
-          </div>
-        ) : (
-          <Button
-            onClick={loadMore}
-            variant="outline"
-            className="w-full h-12 rounded-xl font-bold border-2 hover:bg-muted"
-          >
-            Carregar mais publicações
-          </Button>
-        )}
+            ))
+          ) : (
+            <div className="h-10 flex items-center justify-center">
+              <span className="text-[10px] font-black text-muted-foreground/40 tracking-widest uppercase flex items-center gap-2">
+                <Sparkles className="h-3 w-3 animate-pulse" /> Carregando mais com Inteligência dvscodes <Sparkles className="h-3 w-3 animate-pulse" />
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── RIGHT SIDEBAR ── */}

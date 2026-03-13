@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import AIAssistant from "@/components/ui/AIAssistant";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -258,6 +259,8 @@ const AppLayout: React.FC = () => {
           })}
         </div>
       </nav>
+
+      <AIAssistant />
     </div>
   );
 };
