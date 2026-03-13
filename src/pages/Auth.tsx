@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Volume2 } from "lucide-react";
+import { useAccessibility } from "@/contexts/AccessibilityContext";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,6 +21,14 @@ const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { seniorMode, screenReaderMode } = useAccessibility();
+  const { speak } = useTextToSpeech();
+
+  useEffect(() => {
+    if (screenReaderMode) {
+      speak(isLogin ? "Página de Entrar. Informe seu email e senha." : "Página de Criar Conta. Preencha seus dados.");
+    }
+  }, [isLogin, screenReaderMode, speak]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,15 +49,24 @@ const Auth: React.FC = () => {
           },
         });
         if (error) throw error;
+        const msg = "Conta criada! Verifique seu email para confirmar o cadastro.";
+        speak(msg);
         toast({
           title: "Conta criada!",
-          description: "Verifique seu email para confirmar o cadastro.",
+          description: msg,
         });
       }
     } catch (error: any) {
+      let errorMessage = error.message;
+      if (errorMessage === "Invalid login credentials") {
+        errorMessage = "Email ou senha incorretos. Verifique seus dados.";
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Seu email ainda não foi confirmado. Verifique a caixa de entrada do seu email.";
+      }
+      speak(`Erro: ${errorMessage}`);
       toast({
         title: "Erro",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
