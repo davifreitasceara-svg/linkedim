@@ -321,6 +321,33 @@
   to { background-position: -200% 0; }
 }
 
+/* Multimedia Feed Styles */
+.waveform-bar {
+  display: inline-block;
+  width: 3px;
+  background-color: hsl(var(--primary));
+  margin: 0 1px;
+  border-radius: 1px;
+}
+
+.video-glow-overlay {
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+.surround-emoji {
+  filter: drop-shadow(0 0 10px rgba(var(--primary), 0.5));
+}
+
+@keyframes pulse-soft {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s infinite ease-in-out;
+}
+
 /* ============================================
    NAVBAR FIXA
    ============================================ */

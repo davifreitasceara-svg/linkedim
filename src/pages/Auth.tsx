@@ -66,24 +66,40 @@ const Auth: React.FC = () => {
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
     try {
+      // Dynamic Redirect URL to handle localhost and production (dvscodes AI logic)
+      const currentOrigin = window.location.origin;
+      const redirectURL = currentOrigin.includes("localhost") || currentOrigin.includes("127.0.0.1")
+        ? `${currentOrigin}/`
+        : `${currentOrigin}/`; // Can be customized for specific production subdomains if needed
+
+      console.log("Iniciando Google Auth com redirect:", redirectURL);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/`,
-          // Removed prompt: "select_account" to test if it improves compatibility in some browsers
-          // as it can sometimes be blocked by pop-up blockers or CSRF protections.
+          redirectTo: redirectURL,
+          // We removed prompt: "select_account" to avoid some browser popup blocking issues
+          // If the user still has issues, advising them to check Supabase "Site URL" is key
         },
       });
       if (error) throw error;
     } catch (error: any) {
-      console.error("Erro no Google Auth:", error);
+      console.error("Erro Crítico no Google Auth:", error);
       let desc = error.message;
+      
       if (desc.includes("provider_not_enabled")) {
-        desc = "O login com Google não está ativado no Supabase. Por favor, ative-o no painel de controle.";
+        desc = "O login com Google não está ativado no Supabase (Authentication -> Providers).";
       } else if (desc.includes("configuration_not_found")) {
-        desc = "Configuração do Google não encontrada. Verifique as chaves (Client ID/Secret) no Supabase.";
+        desc = "Client ID ou Secret do Google não configurados corretamente no Supabase.";
+      } else if (desc.includes("redirect_uri_mismatch")) {
+        desc = "Erro de Redirecionamento: Adicione a URL do site no whitelist do Google Console.";
       }
-      toast({ title: "Erro na Autenticação", description: desc, variant: "destructive" });
+      
+      toast({ 
+        title: "Falha na Conexão Google", 
+        description: desc, 
+        variant: "destructive" 
+      });
       setGoogleLoading(false);
     }
   };
