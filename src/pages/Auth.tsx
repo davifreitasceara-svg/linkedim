@@ -65,15 +65,25 @@ const Auth: React.FC = () => {
 
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/`,
-        queryParams: { prompt: "select_account" },
-      },
-    });
-    if (error) {
-      toast({ title: "Erro no login com Google", description: error.message, variant: "destructive" });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          // Removed prompt: "select_account" to test if it improves compatibility in some browsers
+          // as it can sometimes be blocked by pop-up blockers or CSRF protections.
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Erro no Google Auth:", error);
+      let desc = error.message;
+      if (desc.includes("provider_not_enabled")) {
+        desc = "O login com Google não está ativado no Supabase. Por favor, ative-o no painel de controle.";
+      } else if (desc.includes("configuration_not_found")) {
+        desc = "Configuração do Google não encontrada. Verifique as chaves (Client ID/Secret) no Supabase.";
+      }
+      toast({ title: "Erro na Autenticação", description: desc, variant: "destructive" });
       setGoogleLoading(false);
     }
   };

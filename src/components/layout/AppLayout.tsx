@@ -60,10 +60,17 @@ const AppLayout: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Nav */}
+            {/* Desktop Nav */}
           <nav className="hidden md:flex items-center h-full gap-1" role="navigation" aria-label="Navegação principal">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
+              // Mock badge counts
+              const badges: Record<string, number> = {
+                "/messages": 4,
+                "/notifications": 3
+              };
+              const badge = badges[item.path];
+
               return (
                 <button
                   key={item.path}
@@ -78,7 +85,14 @@ const AppLayout: React.FC = () => {
                   aria-label={item.label}
                   aria-current={isActive ? "page" : undefined}
                 >
-                  <item.icon className={cn("h-5 w-5", seniorMode && "h-6 w-6", isActive && "text-primary")} />
+                  <div className="relative">
+                    <item.icon className={cn("h-5 w-5", seniorMode && "h-6 w-6", isActive && "text-primary")} />
+                    {badge > 0 && (
+                      <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border-2 border-card animate-pulse">
+                        {badge}
+                      </span>
+                    )}
+                  </div>
                   <span className={cn("text-[11px] font-semibold hidden lg:block", seniorMode && "text-sm")}>
                     {item.label}
                   </span>
@@ -178,8 +192,19 @@ const AppLayout: React.FC = () => {
       </header>
 
       {/* ── MAIN CONTENT ── */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-5 py-6">
-        <Outlet />
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="w-full h-full"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* ── BOTTOM NAV (Mobile) ── */}
@@ -191,6 +216,12 @@ const AppLayout: React.FC = () => {
         <div className="flex items-center justify-around h-16">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
+            const badges: Record<string, number> = {
+              "/messages": 4,
+              "/notifications": 3
+            };
+            const badge = badges[item.path];
+
             return (
               <button
                 key={item.path}
@@ -211,7 +242,14 @@ const AppLayout: React.FC = () => {
                     className="absolute inset-0 bg-primary/10 rounded-2xl"
                   />
                 )}
-                <item.icon className={cn("h-5 w-5 relative z-10", seniorMode && "h-6 w-6", isActive && "text-primary")} />
+                <div className="relative z-10">
+                  <item.icon className={cn("h-5 w-5", seniorMode && "h-6 w-6", isActive && "text-primary")} />
+                  {badge > 0 && (
+                    <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black rounded-full h-3.5 w-3.5 flex items-center justify-center border-2 border-card">
+                      {badge}
+                    </span>
+                  )}
+                </div>
                 <span className={cn("text-[10px] font-bold relative z-10", seniorMode && "text-xs")}>
                   {item.label.split(" ")[0]}
                 </span>
