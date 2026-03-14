@@ -9,7 +9,7 @@ import {
   Heart, MessageCircle, Send,
   Bookmark, Sparkles, MoreHorizontal,
   ThumbsUp, Globe, BadgeCheck, Play, Pause,
-  Headphones, Video, Zap, TrendingUp, Briefcase, X, Image
+  Headphones, Video, Zap, TrendingUp, Briefcase, X, Image, Volume2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -137,8 +137,9 @@ const topics = [
 
 const Index: React.FC = () => {
   const { user } = useAuth();
-  const { seniorMode, highContrast } = useAccessibility();
+  const { seniorMode, highContrast, screenReaderMode } = useAccessibility();
   const { toast } = useToast();
+  const { speak, stop } = useTextToSpeech();
   
   const [posts, setPosts] = useState<Post[]>(mockPosts);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -595,18 +596,30 @@ const Index: React.FC = () => {
                     <span>{post.comments} comentários</span>
                   </div>
 
-                  <div className="flex items-center gap-1 pt-1">
-                    <Button
-                      variant="ghost" size="sm"
-                      onClick={() => toggleLike(post.id)}
-                      className={cn("flex-1 gap-2 font-black transition-all", post.liked && "text-primary")}
-                    >
-                      <ThumbsUp className={cn("h-4 w-4", likingId === post.id && "animate-heart-beat", post.liked && "fill-primary")} />
-                      Gostei
-                    </Button>
-                    <Button variant="ghost" size="sm" className="flex-1 gap-2 font-black"><MessageCircle className="h-4 w-4" /> Comentar</Button>
-                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full"><Bookmark className="h-4 w-4" /></Button>
-                  </div>
+                    <div className="flex items-center gap-1 pt-1">
+                      <Button
+                        variant="ghost" size="sm"
+                        onClick={() => toggleLike(post.id)}
+                        className={cn("flex-1 gap-2 font-black transition-all", post.liked && "text-primary")}
+                      >
+                        <ThumbsUp className={cn("h-4 w-4", likingId === post.id && "animate-heart-beat", post.liked && "fill-primary")} />
+                        Gostei
+                      </Button>
+                      <Button variant="ghost" size="sm" className="flex-1 gap-2 font-black" onClick={() => toggleComments(post.id)}>
+                        <MessageCircle className="h-4 w-4" /> Comentar
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="flex-1 gap-2 font-black text-blue-600 dark:text-blue-400"
+                        onClick={() => speak(`${post.author} publicou: ${post.content}`)}
+                      >
+                        <Volume2 className="h-4 w-4" /> Escutar
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => toggleBookmark(post.id)}>
+                        <Bookmark className={cn("h-4 w-4", post.bookmarked && "fill-primary text-primary")} />
+                      </Button>
+                    </div>
                 </CardContent>
               </Card>
             </motion.div>

@@ -436,7 +436,7 @@ const Messages: React.FC = () => {
                       </div>
                     ) : (
                       <div className={cn(
-                        "px-4 py-2.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed",
+                        "px-4 py-2.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed group/msg relative",
                         isMe
                           ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm"
                           : activeChat.isVip
@@ -445,6 +445,16 @@ const Messages: React.FC = () => {
                         seniorMode && "text-base py-3 px-5"
                       )}>
                         {msg.text}
+                        <button 
+                          onClick={() => speak(msg.text)}
+                          className={cn(
+                            "absolute top-0 opacity-0 group-hover/msg:opacity-100 transition-opacity p-1 rounded-full bg-black/10 hover:bg-black/20",
+                            isMe ? "left-full ml-2" : "right-full mr-2"
+                          )}
+                          title="Escutar mensagem"
+                        >
+                          <Volume2 className={cn("h-3 w-3", isMe ? "text-primary" : "text-muted-foreground")} />
+                        </button>
                       </div>
                     )}
                     <div className={cn("flex items-center gap-1 mt-1 px-1", isMe ? "flex-row-reverse" : "")}>

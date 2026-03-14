@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Sparkles, X, Send, Cpu, MessageSquare, Zap, 
-  BrainCircuit, Bot, Info, Lightbulb, TrendingUp 
+  BrainCircuit, Bot, Info, Lightbulb, TrendingUp, Volume2 
 } from "lucide-react";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +29,7 @@ const AIAssistant: React.FC = () => {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { speak } = useTextToSpeech();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -137,18 +139,27 @@ const AIAssistant: React.FC = () => {
                         {m.role === "ai" ? <BrainCircuit className="h-4 w-4" /> : "EU"}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={cn(
-                      "p-3 rounded-2xl text-[13px] font-medium leading-relaxed shadow-sm",
-                      m.role === "ai" 
-                        ? "bg-muted/50 rounded-tl-none border border-border/50 text-foreground" 
-                        : "bg-primary text-primary-foreground rounded-tr-none"
-                    )}>
-                      {m.content}
-                      <p className={cn(
-                        "text-[9px] mt-1 font-bold",
-                        m.role === "ai" ? "text-muted-foreground" : "text-primary-foreground/70"
-                      )}>{m.time}</p>
-                    </div>
+                      <div className={cn(
+                        "p-3 rounded-2xl text-[13px] font-medium leading-relaxed shadow-sm relative group/aimsg",
+                        m.role === "ai" 
+                          ? "bg-muted/50 rounded-tl-none border border-border/50 text-foreground" 
+                          : "bg-primary text-primary-foreground rounded-tr-none"
+                      )}>
+                        {m.content}
+                        <button 
+                          onClick={() => speak(m.content)}
+                          className={cn(
+                            "absolute top-0 opacity-0 group-hover/aimsg:opacity-100 transition-opacity p-1 rounded-full bg-black/5 hover:bg-black/10",
+                            m.role === "ai" ? "-right-8" : "-left-8"
+                          )}
+                        >
+                          <Volume2 className="h-3 w-3 text-primary" />
+                        </button>
+                        <p className={cn(
+                          "text-[9px] mt-1 font-bold",
+                          m.role === "ai" ? "text-muted-foreground" : "text-primary-foreground/70"
+                        )}>{m.time}</p>
+                      </div>
                   </motion.div>
                 ))}
                 {isTyping && (
