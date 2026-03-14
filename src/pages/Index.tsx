@@ -147,7 +147,20 @@ const Index: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [likingId, setLikingId] = useState<string | null>(null);
   const [showSurroundFx, setShowSurroundFx] = useState(false);
+  const [matrixParticles, setMatrixParticles] = useState<{ id: number; x: number; y: number }[]>([]);
   const observerTarget = useRef<HTMLDivElement>(null);
+
+  const triggerMatrixEffect = (e: React.MouseEvent) => {
+    const newParticles = Array.from({ length: 12 }).map((_, i) => ({
+      id: Date.now() + i,
+      x: e.clientX,
+      y: e.clientY,
+    }));
+    setMatrixParticles(prev => [...prev.slice(-24), ...newParticles]);
+    setTimeout(() => {
+      setMatrixParticles(prev => prev.filter(p => !newParticles.find(np => np.id === p.id)));
+    }, 1000);
+  };
 
   const [newPostText, setNewPostText] = useState("");
   const [isPosting, setIsPosting] = useState(false);
@@ -290,6 +303,19 @@ const Index: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_300px] gap-5 max-w-7xl mx-auto pb-20 relative">
       <AnimatePresence>
+        {matrixParticles.map(p => (
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 1, scale: 1, y: p.y }}
+            animate={{ opacity: 0, scale: 0.5, y: p.y - 100 }}
+            exit={{ opacity: 0 }}
+            className="fixed z-[250] pointer-events-none text-primary font-black text-[10px] sm:text-xs"
+            style={{ left: p.x + (Math.random() * 40 - 20) }}
+          >
+            {Math.random() > 0.5 ? "1" : "0"}
+          </motion.div>
+        ))}
+
         {showSurroundFx && (
           <motion.div 
             initial={{ opacity: 0 }}
@@ -317,6 +343,8 @@ const Index: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div onClick={triggerMatrixEffect} className="fixed inset-0 z-[-5] pointer-events-auto" />
 
       <div className="hidden md:block space-y-4">
         <Card className={cn("overflow-hidden sticky top-20", cardStyle)}>
@@ -367,6 +395,30 @@ const Index: React.FC = () => {
               </span>
             </div>
           ))}
+        </Card>
+
+        <Card className={cn("p-0 overflow-hidden border-primary/20 bg-primary/5 backdrop-blur-3xl", cardStyle)}>
+          <div className="bg-gradient-to-r from-primary to-indigo-800 p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-white animate-pulse" />
+              <span className="text-white font-black text-xs uppercase tracking-widest">Cortex Live Insights</span>
+            </div>
+            <span className="text-[10px] text-white/70 font-bold uppercase tracking-tighter transition-all">Sincronizado v2.6</span>
+          </div>
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: "Trending", value: "#GlobalTech", change: "+42%" },
+              { label: "Oportunidades", value: "842 vagas", change: "+12" },
+              { label: "Network", value: "Alta Atividade", color: "text-green-500" },
+              { label: "Matches", value: "98% Precisão", color: "text-blue-500" }
+            ].map((stat, i) => (
+              <div key={i} className="flex flex-col gap-0.5">
+                <span className="text-[9px] text-muted-foreground font-black uppercase tracking-tighter">{stat.label}</span>
+                <span className={cn("text-xs font-black truncate", stat.color || "text-foreground")}>{stat.value}</span>
+                {stat.change && <span className="text-[8px] text-green-500 font-bold">{stat.change}</span>}
+              </div>
+            ))}
+          </div>
         </Card>
 
         {posts.map((post, idx) => (

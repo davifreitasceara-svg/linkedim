@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AIAssistant from "@/components/ui/AIAssistant";
+import { NeuralBackground } from "@/components/ui/CyberneticElements";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -309,6 +310,7 @@ const AppLayout: React.FC = () => {
       </nav>
 
       <AIAssistant />
+      <NeuralBackground />
     </div>
   );
 };

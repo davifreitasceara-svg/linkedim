@@ -19,6 +19,7 @@ interface Message {
 
 const AIAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showBiometrics, setShowBiometrics] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     { 
@@ -38,6 +39,14 @@ const AIAssistant: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowBiometrics(true);
+      const timer = setTimeout(() => setShowBiometrics(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -91,10 +100,44 @@ const AIAssistant: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20, transformOrigin: "bottom left" }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="w-[350px] sm:w-[400px] h-[500px] shadow-2xl rounded-3xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-2xl flex flex-col"
+            className="w-[350px] sm:w-[400px] h-[500px] shadow-2xl rounded-3xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-2xl flex flex-col relative"
           >
+            {/* Neural Background for AI Chat */}
+            <div className="absolute inset-0 -z-10 opacity-20 pointer-events-none">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent)]" />
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,transparent,rgba(59,130,246,0.1),transparent)]"
+              />
+            </div>
+
+            {/* Biometric Scan Overlay */}
+            <AnimatePresence>
+              {showBiometrics && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-[110] bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-24 h-24 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 relative"
+                  >
+                    <div className="absolute inset-0 rounded-full border border-primary/30 animate-ping" />
+                    <Cpu className="h-10 w-10 text-primary" />
+                    <div className="absolute inset-x-0 top-0 h-[2px] bg-primary shadow-[0_0_10px_rgba(59,130,246,1)] animate-scan" />
+                  </motion.div>
+                  <h4 className="text-white font-black font-[Space_Grotesk] tracking-wider">AUTENTICAÇÃO NEURAL</h4>
+                  <p className="text-primary/70 text-[10px] font-bold mt-1 uppercase tracking-widest">Sincronizando com Cortex v2.6</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Header */}
-            <div className="p-4 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b border-primary/10 flex items-center justify-between">
+            <div className="p-4 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b border-primary/10 flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 relative overflow-hidden group">
                   <Cpu className="h-6 w-6 text-white relative z-10" />
