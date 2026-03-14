@@ -15,6 +15,8 @@ interface Message {
   from: "me" | "them";
   time: string;
   read?: boolean;
+  type?: "text" | "audio";
+  audioDuration?: number;
 }
 
 interface Chat {
@@ -86,8 +88,52 @@ const Messages: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  
+  // Audio State
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
+  const [audioProgress, setAudioProgress] = useState<Record<number, number>>({});
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout>>();
+  const recordingTimer = useRef<ReturnType<typeof setInterval>>();
+
+  // Handle Recording Timer
+  useEffect(() => {
+    if (isRecording) {
+      recordingTimer.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } else {
+      clearInterval(recordingTimer.current!);
+      setRecordingTime(0);
+    }
+    return () => clearInterval(recordingTimer.current!);
+  }, [isRecording]);
+
+  // Handle Playback Timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (playingAudio !== null) {
+      interval = setInterval(() => {
+        setAudioProgress(prev => {
+          const current = prev[playingAudio] || 0;
+          if (current >= 100) {
+            setPlayingAudio(null);
+            return { ...prev, [playingAudio]: 0 };
+          }
+          return { ...prev, [playingAudio]: current + 5 }; // progress
+        });
+      }, 300);
+    }
+    return () => clearInterval(interval);
+  }, [playingAudio]);
+
+  const toggleAudio = (id: number) => {
+    if (playingAudio === id) setPlayingAudio(null);
+    else setPlayingAudio(id);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -95,19 +141,22 @@ const Messages: React.FC = () => {
 
   useEffect(() => { scrollToBottom(); }, [activeChat.id, activeChat.messages.length]);
 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
+  const handleSend = (type: "text" | "audio" = "text", duration: number = 0) => {
+    if (type === "text" && !inputText.trim()) return;
+    
     const newMsg: Message = {
       id: Date.now(),
-      text: inputText.trim(),
+      text: type === "audio" ? "Mensagem de Áudio" : inputText.trim(),
       from: "me",
       time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
       read: false,
+      type: type,
+      audioDuration: duration,
     };
 
     const updatedChats = chats.map(c =>
       c.id === activeChat.id
-        ? { ...c, messages: [...c.messages, newMsg], msg: inputText.trim(), time: "Agora" }
+        ? { ...c, messages: [...c.messages, newMsg], msg: type === "audio" ? "🎵 Áudio" : inputText.trim(), time: "Agora" }
         : c
     );
     setChats(updatedChats);
@@ -119,34 +168,47 @@ const Messages: React.FC = () => {
     // Simulate reply
     setIsTyping(true);
     typingTimer.current = setTimeout(() => {
-      const replies = [
+      const isReplyAudio = Math.random() > 0.7;
+      const replyTypes = [
         "Entendido! Vou verificar isso e te retorno em breve.",
         "Perfeito! Podemos agendar para essa semana?",
         "Ótimo! Obrigado pela resposta rápida 😊",
-        "Show! Vou encaminhar para o time e dou um retorno.",
-        "Combinado! Qualquer dúvida, estou aqui.",
+        "Show! Vou encaminhar para o time.",
       ];
+      
       const reply: Message = {
         id: Date.now() + 1,
-        text: replies[Math.floor(Math.random() * replies.length)],
+        text: isReplyAudio ? "Mensagem de Áudio" : replyTypes[Math.floor(Math.random() * replyTypes.length)],
         from: "them",
         time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
         read: false,
+        type: isReplyAudio ? "audio" : "text",
+        audioDuration: isReplyAudio ? Math.floor(Math.random() * 20) + 5 : undefined
       };
+      
       setIsTyping(false);
       setChats(prev => prev.map(c =>
         c.id === activeChat.id
-          ? { ...c, messages: [...c.messages, newMsg, reply], msg: reply.text, time: "Agora" }
+          ? { ...c, messages: [...c.messages, newMsg, reply], msg: isReplyAudio ? "🎵 Áudio" : reply.text, time: "Agora" }
           : c
       ));
       setActiveChat(prev => ({ ...prev, messages: [...prev.messages, newMsg, reply] }));
-    }, 1500 + Math.random() * 1000);
+    }, 2000 + Math.random() * 1000);
+  };
+
+  const handleMicClick = () => {
+    if (isRecording) {
+      setIsRecording(false);
+      handleSend("audio", recordingTime);
+    } else {
+      setIsRecording(true);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      handleSend("text");
     }
   };
 
@@ -318,17 +380,49 @@ const Messages: React.FC = () => {
                     </Avatar>
                   )}
                   <div className={cn("max-w-[75%] flex flex-col", isMe ? "items-end" : "items-start")}>
-                    <div className={cn(
-                      "px-4 py-2.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed",
-                      isMe
-                        ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm"
-                        : activeChat.isVip
-                          ? "bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-900/40 border border-indigo-200 dark:border-indigo-800 text-foreground rounded-bl-sm"
-                          : "bg-card border border-border/60 text-foreground rounded-bl-sm",
-                      seniorMode && "text-base py-3 px-5"
-                    )}>
-                      {msg.text}
-                    </div>
+                    {msg.type === "audio" ? (
+                      <div className={cn(
+                        "px-4 py-3 rounded-2xl shadow-sm flex items-center gap-3 w-64",
+                        isMe ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm" 
+                             : "bg-card border border-border/60 text-foreground rounded-bl-sm"
+                      )}>
+                        <Button 
+                          onClick={() => toggleAudio(msg.id)}
+                          size="icon" 
+                          className={cn("h-10 w-10 shrink-0 rounded-full", isMe ? "bg-white/20 text-white hover:bg-white/30" : "bg-primary text-white shadow-md")}
+                        >
+                          {playingAudio === msg.id ? <Volume2 className="h-4 w-4 animate-pulse" /> : <Play className="h-4 w-4 ml-0.5" />}
+                        </Button>
+                        <div className="flex-1 flex flex-col gap-1 overflow-hidden">
+                           {/* Waveform */}
+                           <div className="flex items-center gap-[2px] h-6 w-full opacity-80">
+                              {[...Array(15)].map((_, w_i) => (
+                                 <motion.div
+                                    key={w_i}
+                                    animate={{ height: playingAudio === msg.id ? [4, Math.random() * 16 + 8, 4] : 4 }}
+                                    transition={{ duration: 0.5, repeat: playingAudio === msg.id ? Infinity : 0, delay: w_i * 0.05 }}
+                                    className={cn("flex-1 rounded-full", ((audioProgress[msg.id] || 0) / 100) > (w_i/15) ? (isMe ? "bg-white" : "bg-primary") : (isMe ? "bg-white/30" : "bg-primary/20"))}
+                                 />
+                              ))}
+                           </div>
+                           <span className={cn("text-[10px] font-bold text-right", isMe ? "text-white/80" : "text-muted-foreground")}>
+                             {playingAudio === msg.id ? `0:${Math.floor(((audioProgress[msg.id] || 0) / 100) * (msg.audioDuration || 0)).toString().padStart(2, '0')}` : `0:${msg.audioDuration?.toString().padStart(2, '0')}`}
+                           </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={cn(
+                        "px-4 py-2.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed",
+                        isMe
+                          ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm"
+                          : activeChat.isVip
+                            ? "bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-900/40 border border-indigo-200 dark:border-indigo-800 text-foreground rounded-bl-sm"
+                            : "bg-card border border-border/60 text-foreground rounded-bl-sm",
+                        seniorMode && "text-base py-3 px-5"
+                      )}>
+                        {msg.text}
+                      </div>
+                    )}
                     <div className={cn("flex items-center gap-1 mt-1 px-1", isMe ? "flex-row-reverse" : "")}>
                       <span className="text-[10px] text-muted-foreground font-medium">{msg.time}</span>
                       {isMe && (
@@ -405,32 +499,42 @@ const Messages: React.FC = () => {
                 </Button>
               </div>
               <textarea
-                placeholder="Escreva uma mensagem..."
+                placeholder={isRecording ? "Gravando áudio..." : "Escreva uma mensagem..."}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
+                disabled={isRecording}
                 className={cn(
                   "flex-1 bg-transparent border-0 resize-none outline-none font-medium p-2 max-h-32",
+                  isRecording && "text-red-500 animate-pulse",
                   seniorMode ? "text-xl" : "text-sm"
                 )}
                 rows={1}
               />
               <div className="flex items-center gap-1 pb-1.5 pr-1.5">
                 {!inputText.trim() && (
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground">
-                    <Mic className="h-5 w-5" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {isRecording && <span className="text-xs font-bold text-red-500 mr-2">0:{recordingTime.toString().padStart(2, '0')}</span>}
+                    <Button 
+                      variant={isRecording ? "default" : "ghost"} 
+                      size="icon" 
+                      className={cn("h-9 w-9 rounded-full transition-all", isRecording ? "bg-red-500 hover:bg-red-600 text-white animate-pulse" : "text-muted-foreground hover:text-foreground")}
+                      onClick={handleMicClick}
+                    >
+                      {isRecording ? <Check className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                    </Button>
+                  </div>
                 )}
                 <Button
                   size="icon"
                   className={cn(
                     "h-9 w-9 rounded-full font-bold shadow-md transition-all",
-                    inputText.trim()
+                    inputText.trim() && !isRecording
                       ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white scale-100"
-                      : "opacity-40 cursor-default bg-muted"
+                      : "opacity-40 cursor-default bg-muted hidden md:flex"
                   )}
-                  onClick={handleSend}
-                  disabled={!inputText.trim()}
+                  onClick={() => handleSend("text")}
+                  disabled={!inputText.trim() || isRecording}
                 >
                   <Send className="h-4 w-4" />
                 </Button>

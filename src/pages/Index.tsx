@@ -5,12 +5,11 @@ import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  Heart, MessageCircle, ImagePlus, Send, Mic, Volume2,
-  Bookmark, Trophy, Sparkles, MoreHorizontal,
-  ThumbsUp, Globe, BadgeCheck, Play, Pause, FastForward,
-  Headphones, Video, Zap, Star, TrendingUp
+  Heart, MessageCircle, Send,
+  Bookmark, Sparkles, MoreHorizontal,
+  ThumbsUp, Globe, BadgeCheck, Play, Pause,
+  Headphones, Video, Zap, TrendingUp, Briefcase, X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -42,6 +41,7 @@ interface Post {
   image?: boolean;
   video?: boolean;
   audio?: boolean;
+  isJob?: boolean;
   imageGradient?: string;
   reactions?: { emoji: string; count: number }[];
   commentsList?: Comment[];
@@ -81,6 +81,22 @@ const mockPosts: Post[] = [
     audio: true,
   },
   {
+    id: "job-1",
+    author: "dvscodes Careers",
+    authorLogo: "dvs",
+    title: "Vaga Recomendada Mensal",
+    content: "Estamos buscando Especialistas em Acessibilidade Digital e UX/UI para construir o futuro da web inclusiva conosco.",
+    likes: 1204,
+    comments: 45,
+    shares: 210,
+    liked: false,
+    bookmarked: true,
+    timeAgo: "Vaga sugerida pela IA",
+    isVerified: true,
+    isJob: true,
+    imageGradient: "from-blue-800 via-indigo-900 to-slate-900"
+  },
+  {
     id: "dvs-1",
     author: "dvscodes",
     authorLogo: "dvs",
@@ -99,6 +115,16 @@ const mockPosts: Post[] = [
   }
 ];
 
+const mockStories = [
+  { id: 1, name: "Você", logo: "VC", hasStory: false },
+  { id: 2, name: "dvscodes", logo: "dvs", hasStory: true, isLive: true },
+  { id: 3, name: "Nubank", logo: "NU", hasStory: true },
+  { id: 4, name: "Ana P.", logo: "AP", hasStory: true },
+  { id: 5, name: "Carlos", logo: "CE", hasStory: true },
+  { id: 6, name: "TechBR", logo: "TB", hasStory: false },
+  { id: 7, name: "Beatriz", logo: "BL", hasStory: false }
+];
+
 const names = ["Beatriz Lima", "Carlos Eduardo", "Julia Silva", "Tech World", "Senior Link", "Dev Master", "Inovação BR"];
 const logos = ["BL", "CE", "JS", "TW", "SL", "DM", "IB"];
 const topics = [
@@ -106,24 +132,23 @@ const topics = [
   "Dica do dia: Use Framer Motion para animações fluidas.",
   "Como conseguir sua primeira vaga sênior?",
   "A importância do contraste acessível no design moderno.",
-  "IA não vai substituir devs, vai potencializá-los.",
-  "Acabei de publicar um novo vídeo sobre Next.js!",
-  "Quem mais ama o modo Senior Mode do ProConnect?"
+  "IA não vai substituir devs, vai potencializá-los."
 ];
 
 const Index: React.FC = () => {
   const { user } = useAuth();
   const { seniorMode, highContrast } = useAccessibility();
-  const { speak } = useTextToSpeech();
   const { toast } = useToast();
   
   const [posts, setPosts] = useState<Post[]>(mockPosts);
-  const [newPost, setNewPost] = useState("");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
   const [likingId, setLikingId] = useState<string | null>(null);
   const [showSurroundFx, setShowSurroundFx] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Audio Player State
+  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState<Record<string, number>>({});
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "VC";
   const fullName = user?.user_metadata?.full_name || "Você";
@@ -138,31 +163,54 @@ const Index: React.FC = () => {
       { threshold: 1.0, rootMargin: "200px" }
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingMore]);
+
+  // Handle Audio Progress
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (playingAudio) {
+      interval = setInterval(() => {
+        setAudioProgress(prev => {
+          const current = prev[playingAudio] || 0;
+          if (current >= 100) {
+            setPlayingAudio(null);
+            return { ...prev, [playingAudio]: 0 }; // Reset
+          }
+          return { ...prev, [playingAudio]: current + 2 }; // Speed of audio playback
+        });
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [playingAudio]);
 
   const loadMore = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
       const randomIdx = Math.floor(Math.random() * names.length);
-      const isVideo = Math.random() > 0.7;
+      const isVideo = Math.random() > 0.8;
       const isAudio = !isVideo && Math.random() > 0.7;
-      const isImg = !isVideo && !isAudio && Math.random() > 0.5;
+      const isJob = !isVideo && !isAudio && Math.random() > 0.7;
+      const isImg = !isVideo && !isAudio && !isJob && Math.random() > 0.5;
 
       const extra: Post = {
         id: `ai-post-${Date.now()}-${Math.random()}`,
-        author: names[randomIdx],
-        authorLogo: logos[randomIdx],
-        title: "Conteúdo Gerado por IA",
-        content: topics[Math.floor(Math.random() * topics.length)],
+        author: isJob ? "Recrutador IA" : names[randomIdx],
+        authorLogo: isJob ? "IA" : logos[randomIdx],
+        title: isJob ? "Vaga Exclusiva Inline" : "Conteúdo Gerado por IA",
+        content: isJob 
+          ? `Temos uma ótima oportunidade para ${fullName} como Tech Lead! Clique em Candidatura Simples para aplicar instantaneamente com seu perfil.`
+          : topics[Math.floor(Math.random() * topics.length)],
         likes: Math.floor(Math.random() * 5000),
         comments: Math.floor(Math.random() * 200),
         shares: Math.floor(Math.random() * 100),
@@ -172,14 +220,25 @@ const Index: React.FC = () => {
         isVerified: Math.random() > 0.6,
         video: isVideo,
         audio: isAudio,
+        isJob: isJob,
         image: isImg,
-        imageGradient: `from-${["red", "blue", "green", "purple", "orange"][randomIdx % 5]}-600 to-indigo-900`,
+        imageGradient: isJob 
+          ? "from-slate-800 to-black" 
+          : `from-${["red", "blue", "green", "purple", "orange"][randomIdx % 5]}-600 to-indigo-900`,
         views: isVideo ? Math.floor(Math.random() * 50000) : undefined
       };
       
       setPosts(prev => [...prev, extra]);
       setIsLoadingMore(false);
     }, 1500);
+  };
+
+  const toggleAudio = (id: string) => {
+    if (playingAudio === id) {
+      setPlayingAudio(null);
+    } else {
+      setPlayingAudio(id);
+    }
   };
 
   const toggleLike = (postId: string) => {
@@ -215,21 +274,21 @@ const Index: React.FC = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 pointer-events-none z-[200] flex items-center justify-center overflow-hidden"
           >
-            {[...Array(12)].map((_, i) => (
+            {[...Array(15)].map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0, x: 0, y: 0 }}
                 animate={{ 
-                  scale: [0, 1.5, 0],
-                  x: Math.random() * 1000 - 500,
-                  y: Math.random() * 1000 - 500,
+                  scale: [0, Math.random() * 1.5 + 0.5, 0],
+                  x: Math.random() * 1200 - 600,
+                  y: Math.random() * 1200 - 600,
                   opacity: [0, 1, 0],
                   rotate: Math.random() * 360
                 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
                 className="absolute"
               >
-                <Heart className="h-12 w-12 text-primary fill-primary opacity-20" />
+                <Heart className="h-16 w-16 text-primary fill-primary opacity-30" />
               </motion.div>
             ))}
           </motion.div>
@@ -260,6 +319,40 @@ const Index: React.FC = () => {
 
       {/* ── CENTER FEED ── */}
       <div className="space-y-4 min-w-0">
+        
+        {/* STORIES HEADER */}
+        <Card className={cn("p-4 flex gap-4 overflow-x-auto scrollbar-hide items-center", cardStyle)}>
+          {mockStories.map((story) => (
+            <div key={story.id} className="flex flex-col items-center gap-2 cursor-pointer group shrink-0">
+              <div className="relative">
+                <Avatar className={cn(
+                  "h-14 w-14 border-2 transition-transform group-hover:scale-105",
+                  story.hasStory ? "border-primary p-0.5" : "border-border/50",
+                  story.isLive && "border-red-500 animate-pulse"
+                )}>
+                  <AvatarFallback className={cn("rounded-full font-bold", story.logo === "dvs" ? "bg-black text-white" : "bg-secondary")}>
+                    {story.id === 1 ? initials : story.logo}
+                  </AvatarFallback>
+                </Avatar>
+                {story.id === 1 && (
+                  <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full h-5 w-5 flex items-center justify-center border-2 border-background font-black text-xs">
+                    +
+                  </div>
+                )}
+                {story.isLive && (
+                  <div className="absolute -bottom-1 -left-1 right-[-4px] bg-red-500 text-white rounded-sm h-4 flex items-center justify-center font-black text-[8px] uppercase tracking-tighter shadow-sm border border-background">
+                    AO VIVO
+                  </div>
+                )}
+              </div>
+              <span className="text-[10px] font-bold text-muted-foreground group-hover:text-foreground line-clamp-1 max-w-[60px] text-center">
+                {story.name}
+              </span>
+            </div>
+          ))}
+        </Card>
+
+        {/* FEED POSTS */}
         <AnimatePresence>
           {posts.map((post, idx) => (
             <motion.div
@@ -272,13 +365,16 @@ const Index: React.FC = () => {
                 <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 rounded-xl border border-border/50">
-                      <AvatarFallback className={cn("rounded-xl font-bold", post.authorLogo === "dvs" ? "bg-black text-white" : "bg-secondary")}>
+                      <AvatarFallback className={cn("rounded-xl font-bold", post.authorLogo === "dvs" || post.authorLogo === "IA" ? "bg-black text-white" : "bg-secondary")}>
                         {post.authorLogo}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="flex items-center gap-1">
-                        <span className="font-black text-sm hover:underline cursor-pointer">{post.author}</span>
+                        <span className="font-black text-sm hover:underline cursor-pointer flex items-center gap-1">
+                          {post.author} 
+                          {post.isJob && <Briefcase className="h-3 w-3 text-primary" />}
+                        </span>
                         {post.isVerified && <BadgeCheck className="h-3.5 w-3.5 text-blue-500 fill-blue-500 stroke-white" />}
                       </div>
                       <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1">
@@ -299,7 +395,7 @@ const Index: React.FC = () => {
                   {post.video ? (
                     <div className={cn("relative aspect-video rounded-2xl bg-gradient-to-br flex flex-col items-center justify-center text-white overflow-hidden shadow-2xl", post.imageGradient)}>
                       <div className="absolute inset-0 bg-black/20 group-hover/post:bg-black/10 transition-colors" />
-                      <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 relative z-10 shadow-xl group-hover/post:scale-110 transition-transform">
+                      <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 relative z-10 shadow-xl group-hover/post:scale-110 transition-transform cursor-pointer">
                         <Play className="h-8 w-8 fill-white text-white ml-1" />
                       </div>
                       <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-10">
@@ -319,27 +415,70 @@ const Index: React.FC = () => {
                   ) : post.audio ? (
                     <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col gap-4">
                       <div className="flex items-center gap-4">
-                        <Button size="icon" className="h-12 w-12 rounded-full bg-primary text-white shadow-lg shadow-primary/20">
-                          <Play className="h-5 w-5 fill-current ml-1" />
+                        <Button 
+                          onClick={() => toggleAudio(post.id)}
+                          size="icon" 
+                          className={cn("h-12 w-12 rounded-full text-white shadow-lg transition-all", playingAudio === post.id ? "bg-red-500 hover:bg-red-600" : "bg-primary")}
+                        >
+                          {playingAudio === post.id ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current ml-1" />}
                         </Button>
                         <div className="flex-1 space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-black uppercase text-primary tracking-tighter flex items-center gap-1">
-                              <Headphones className="h-3 w-3" /> Mensagem de Áudio
+                              <Headphones className="h-3 w-3" /> 
+                              {playingAudio === post.id ? "Reproduzindo..." : "Mensagem de Áudio"}
                             </span>
-                            <span className="text-[10px] font-black text-muted-foreground">0:42 / 1:30</span>
+                            <span className="text-[10px] font-black text-muted-foreground">
+                              {playingAudio === post.id ? `0:${Math.floor(((audioProgress[post.id] || 0) / 100) * 42).toString().padStart(2, '0')}` : "0:00"} / 0:42
+                            </span>
                           </div>
-                          <div className="flex gap-0.5 items-end h-10">
-                            {[...Array(40)].map((_, i) => (
+                          
+                          {/* Audio Waveform Interactive */}
+                          <div className="flex gap-[2px] items-center h-10 w-full bg-black/5 dark:bg-white/5 rounded-lg px-2 relative overflow-hidden">
+                             {/* Progress indicator background */}
+                             <motion.div 
+                                className="absolute left-0 top-0 bottom-0 bg-primary/10 z-0"
+                                animate={{ width: `${audioProgress[post.id] || 0}%` }}
+                                transition={{ ease: "linear" }}
+                             />
+                            {[...Array(50)].map((_, i) => (
                               <motion.div
                                 key={i}
-                                animate={{ height: [10, Math.random() * 40, 10] }}
-                                transition={{ duration: 1, repeat: Infinity, delay: i * 0.05 }}
-                                className="w-1 bg-primary/40 rounded-full"
+                                animate={{ 
+                                  height: playingAudio === post.id 
+                                    ? [10, Math.random() * 30 + 10, 10] 
+                                    : [10, 10, 10] 
+                                }}
+                                transition={{ duration: 0.5, repeat: playingAudio === post.id ? Infinity : 0, delay: i * 0.02 }}
+                                className={cn(
+                                  "flex-1 rounded-full relative z-10",
+                                  ((audioProgress[post.id] || 0) / 100) > i / 50 ? "bg-primary" : "bg-primary/30"
+                                )}
                               />
                             ))}
                           </div>
+
                         </div>
+                      </div>
+                    </div>
+                  ) : post.isJob ? (
+                    <div className={cn("rounded-2xl border-2 border-border/50 bg-muted/20 overflow-hidden relative shadow-md")}>
+                      <div className="absolute top-0 right-0 p-3">
+                         <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-black/5"><X className="h-4 w-4" /></Button>
+                      </div>
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-800 to-black flex items-center justify-center shadow-lg">
+                            <Briefcase className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-lg">Tech Lead Acessibilidade</h4>
+                            <p className="text-sm font-bold text-muted-foreground">dvscodes • Remoto (Brasil)</p>
+                          </div>
+                        </div>
+                        <Button className="w-full font-bold h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20">
+                          Candidatura Simples (1 Clique)
+                        </Button>
                       </div>
                     </div>
                   ) : post.image ? (
