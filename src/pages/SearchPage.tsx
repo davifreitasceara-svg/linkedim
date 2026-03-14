@@ -18,11 +18,30 @@ interface Professional {
 }
 
 const mockProfessionals: Professional[] = [
-  { id: "1", name: "eduarda leal", title: "delegada federal", skills: ["Illustrator", "Branding", "UI/UX"], location: "São Paulo" },
-  { id: "2", name: "issac silva", title: "Desenvolvedor Full Stack", skills: ["React", "Node.js", "TypeScript"], location: "Rio de Janeiro" },
-  { id: "3", name: "kauan", title: "stremer", skills: ["Lightroom", "Edição", "Retrato"], location: "Belo Horizonte" },
-  { id: "4", name: "gabriel", title: "policial", skills: ["Premiere", "After Effects", "Motion"], location: "Curitiba" },
-  { id: "5", name: "aristotoles", title: "entregador", skills: ["SEO", "Copywriting", "Blog"], location: "Porto Alegre" },
+  { id: "v-1", name: "vicente", title: "técnico", skills: ["Hardware", "Redes"], location: "São Paulo" },
+  { id: "l-1", name: "levi", title: "programador", skills: ["React", "Go"], location: "Rio de Janeiro" },
+  { id: "do-1", name: "davi oliveira", title: "maquinário", skills: ["Mecânica", "Operação"], location: "Santos" },
+  { id: "i-1", name: "isadora", title: "advogada", skills: ["Direito Digital", "Criminal"], location: "Brasília" },
+  { id: "p-1", name: "paulo", title: "programador", skills: ["Java", "SQL"], location: "Belo Horizonte" },
+  { id: "a-1", name: "Andre", title: "programador", skills: ["Node.js", "DevOps"], location: "Curitiba" },
+  { id: "az-1", name: "andreza", title: "blogueira", skills: ["Social Media", "Lifestyle"], location: "Recife" },
+  { id: "s-1", name: "sofia", title: "estilista", skills: ["Fashion Design", "Corte"], location: "Milão (Home Office)" },
+  { id: "d-1", name: "diogo", title: "professor", skills: ["História", "Filosofia"], location: "Porto Alegre" },
+  { id: "f-1", name: "falcone", title: "programador", skills: ["Cybersecurity", "C++"], location: "Vila Velha" },
+  { id: "jp-1", name: "joao pedro", title: "cabeleireiro", skills: ["Visagismo", "Cor"], location: "Fortaleza" },
+  { id: "vc-1", name: "vitor cerqueira", title: "cantor", skills: ["Vocal", "Composição"], location: "Salvador" },
+  { id: "e-1", name: "eros", title: "engenheiro", skills: ["Civil", "Estruturas"], location: "Goiânia" },
+  { id: "jd-1", name: "jade", title: "estreming", skills: ["Gaming", "Twitch"], location: "Internet" },
+  { id: "dk-1", name: "david kayke", title: "piao", skills: ["Campo", "Trator"], location: "Cuiabá" },
+  { id: "j-1", name: "julio", title: "marketing", skills: ["Ads", "Copy"], location: "Florianópolis" },
+  { id: "pv-1", name: "predro victor", title: "professor", skills: ["Matemática", "Robótica"], location: "Manaus" },
+  { id: "ar-1", name: "ariane", title: "policial", skills: ["Tática", "Combate"], location: "Belém" },
+  { id: "c-1", name: "calebe", title: "professor", skills: ["Português", "Literatura"], location: "Natal" },
+  { id: "gc-1", name: "Gabriel Cabreira", title: "cientista", skills: ["Física", "Dados"], location: "Houston (NASA)" },
+  { id: "ju-1", name: "julie", title: "programadora", skills: ["Rust", "React"], location: "Palo Alto" },
+  { id: "li-1", name: "liana", title: "marketing", skills: ["SEO", "Growth"], location: "Dublin" },
+  { id: "mx-1", name: "maximiliano", title: "veterinario", skills: ["Exóticos", "Cirurgia"], location: "Berlim" },
+  { id: "sa-1", name: "sarah", title: "veterinaria", skills: ["Clínica", "Diagnóstico"], location: "Toronto" },
 ];
 
 const SearchPage: React.FC = () => {
