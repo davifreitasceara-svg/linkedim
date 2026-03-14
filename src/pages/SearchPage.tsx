@@ -18,11 +18,11 @@ interface Professional {
 }
 
 const mockProfessionals: Professional[] = [
-  { id: "1", name: "Maria Silva", title: "Designer Gráfica", skills: ["Illustrator", "Branding", "UI/UX"], location: "São Paulo" },
-  { id: "2", name: "João Santos", title: "Desenvolvedor Full Stack", skills: ["React", "Node.js", "TypeScript"], location: "Rio de Janeiro" },
-  { id: "3", name: "Ana Oliveira", title: "Fotógrafa", skills: ["Lightroom", "Edição", "Retrato"], location: "Belo Horizonte" },
-  { id: "4", name: "Carlos Lima", title: "Editor de Vídeo", skills: ["Premiere", "After Effects", "Motion"], location: "Curitiba" },
-  { id: "5", name: "Fernanda Costa", title: "Redatora", skills: ["SEO", "Copywriting", "Blog"], location: "Porto Alegre" },
+  { id: "1", name: "eduarda leal", title: "delegada federal", skills: ["Illustrator", "Branding", "UI/UX"], location: "São Paulo" },
+  { id: "2", name: "issac silva", title: "Desenvolvedor Full Stack", skills: ["React", "Node.js", "TypeScript"], location: "Rio de Janeiro" },
+  { id: "3", name: "kauan", title: "stremer", skills: ["Lightroom", "Edição", "Retrato"], location: "Belo Horizonte" },
+  { id: "4", name: "gabriel", title: "policial", skills: ["Premiere", "After Effects", "Motion"], location: "Curitiba" },
+  { id: "5", name: "aristotoles", title: "entregador", skills: ["SEO", "Copywriting", "Blog"], location: "Porto Alegre" },
 ];
 
 const SearchPage: React.FC = () => {

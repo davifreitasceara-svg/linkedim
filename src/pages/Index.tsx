@@ -125,8 +125,8 @@ const mockStories = [
   { id: 7, name: "Beatriz", logo: "BL", hasStory: false }
 ];
 
-const names = ["Beatriz Lima", "Carlos Eduardo", "Julia Silva", "Tech World", "Senior Link", "Dev Master", "Inovação BR"];
-const logos = ["BL", "CE", "JS", "TW", "SL", "DM", "IB"];
+const names = ["eduarda leal", "issac silva", "kauan", "gabriel", "aristotoles", "dvscodes IA", "Senior Link"];
+const logos = ["EL", "IS", "K", "G", "A", "dvs", "SL"];
 const topics = [
   "O mercado de TI em 2026 está incrível!",
   "Dica do dia: Use Framer Motion para animações fluidas.",

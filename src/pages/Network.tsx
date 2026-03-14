@@ -28,14 +28,12 @@ interface Person {
 }
 
 const suggestions: Person[] = [
-  { name: "dvscodes AI Recruiter", role: "Recrutamento Automatizado Premium", company: "dvscodes", mutual: 42, isVip: true, isVerified: true, logo: "dvs", tags: ["IA", "Recrutamento", "UX"] },
-  { name: "Fernanda Costa", role: "Head of Design", company: "dvscodes", mutual: 18, isVip: true, isVerified: true, logo: "FC", tags: ["UX", "Figma", "Glassmorphism"] },
-  { name: "Lucas Oliveira", role: "CTO & Co-founder", company: "Nubank", mutual: 12, isVerified: true, logo: "LO", tags: ["Backend", "Fintech"] },
-  { name: "Mariana Alves", role: "Senior Frontend Engineer", company: "iFood", mutual: 8, logo: "MA", tags: ["React", "TypeScript"] },
-  { name: "Rafael Mendes", role: "Product Manager", company: "Mercado Livre", mutual: 5, logo: "RM", tags: ["Product", "Agile"] },
-  { name: "Juliana Santos", role: "UX Researcher", company: "Embraer", mutual: 4, logo: "JS", tags: ["Research", "Usabilidade"] },
-  { name: "Carlos Ferreira", role: "DevOps Engineer", company: "Petrobras", mutual: 3, logo: "CF", tags: ["AWS", "Kubernetes"] },
-  { name: "Ana Beatriz", role: "Data Scientist", company: "Coca-Cola FEMSA", mutual: 2, logo: "AB", tags: ["Python", "ML", "SQL"] },
+  { name: "dvscodes IA Recruiter", role: "Recrutamento Automatizado Premium", company: "dvscodes", mutual: 42, isVip: true, isVerified: true, logo: "dvs", tags: ["IA", "Recrutamento", "UX"] },
+  { name: "eduarda leal", role: "Delegada Federal", company: "Polícia Federal", mutual: 18, isVip: true, isVerified: true, logo: "EL", tags: ["Segurança", "Direito", "Liderança"] },
+  { name: "issac silva", role: "Desenvolvedor Full Stack", company: "dvscodes", mutual: 12, isVerified: true, logo: "IS", tags: ["React", "Node.js", "TypeScript"] },
+  { name: "kauan", role: "Streamer & Content Creator", company: "Twitch", mutual: 8, logo: "K", tags: ["Gaming", "Entertainment"] },
+  { name: "gabriel", role: "Policial", company: "Polícia Militar", mutual: 5, logo: "G", tags: ["Segurança Pública", "Tática"] },
+  { name: "aristotoles", role: "Entregador", company: "iFood", mutual: 4, logo: "A", tags: ["Logística", "Agilidade"] },
 ];
 
 const networkNav = [
