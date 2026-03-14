@@ -87,73 +87,258 @@ const getPersonData = (name: string | undefined, currentUser: { user_metadata?: 
       isVip: true,
       initials: currentUser?.email?.slice(0, 2).toUpperCase() || "VC",
       skills: ["React", "TypeScript", "Acessibilidade", "Next.js"],
-      stats: { views: "1.2k", connections: "420", searches: "85" }
+      stats: { views: "1.2k", connections: "420", searches: "85" },
+      highlights: ["Líder Técnico dvscodes", "Especialista WCAG", "Open Source Contributor"]
     };
   }
 
   const n = name.toLowerCase();
   
-  // LEGAL THEME: Lawyers, Delegates, Police
-  if (n.includes("isadora") || n.includes("eduarda") || n.includes("delegada") || n.includes("policial") || n.includes("ariane") || n.includes("gabriel") && !n.includes("cabreira")) return {
-    name: name, role: n.includes("isadora") ? "Advogada Criminalista" : n.includes("eduarda") ? "Delegada Federal" : "Oficial de Segurança",
-    company: n.includes("isadora") ? "Direito Digital & Associados" : "Segurança Pública", location: "Brasília, DF",
-    bio: "Comprometimento com a justiça e a segurança. Atuando com ética e rigor técnico para proteger a sociedade no ambiente real e digital.",
-    theme: "legal" as ThemeType, isVip: n.includes("eduarda") || n.includes("isadora"), initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Direito", "Investigação", "Segurança", "Compliance"],
-    stats: { views: "3.4k", connections: "1.2k", searches: "210" }
+  // --- INDIVIDUAL PERSONALIZATION ---
+
+  // LEGAL & SECURITY
+  if (n.includes("eduarda leal")) return {
+    name: "Eduarda Leal", role: "Delegada Federal", company: "Polícia Federal", location: "Brasília, DF",
+    bio: "Especialista em inteligência cibernética e combate ao crime organizado. Atuando na linha de frente da segurança nacional com foco em tecnologia forense.",
+    theme: "legal" as ThemeType, isVip: true, initials: "EL",
+    skills: ["Inteligência", "Forense Digital", "Criminologia", "Gestão de Crise"],
+    stats: { views: "5.2k", connections: "1.8k", searches: "450" },
+    highlights: ["Medalha Mérito Policial", "Caso 'Dark Web' 2025", "Expert em Cripto-investigação"]
+  };
+  if (n.includes("isadora")) return {
+    name: "Isadora Lima", role: "Advogada de Direito Digital", company: "CyberLaw & Associados", location: "São Paulo, SP",
+    bio: "Defensora da privacidade e da ética na rede. Especialista em LGPD e litígios envolvendo tecnologia e propriedade intelectual.",
+    theme: "legal" as ThemeType, isVip: true, initials: "IL",
+    skills: ["LGPD", "Compliance", "Direito Digital", "Propriedade Intelectual"],
+    stats: { views: "3.1k", connections: "950", searches: "180" },
+    highlights: ["Top Voice Jurídico 2026", "Consultora 'Privacy First'", "Palestrante WebSummit"]
+  };
+  if (n.includes("gabriel") && !n.includes("cabreira")) return {
+    name: "Gabriel Santos", role: "Policial Militar", company: "Segurança Pública", location: "Curitiba, PR",
+    bio: "Dedicado ao policiamento ostensivo e à proteção da comunidade. Especialista em táticas urbanas e mediação de conflitos.",
+    theme: "legal" as ThemeType, isVip: false, initials: "G",
+    skills: ["Tática Urbana", "Segurança", "Mediação", "Primeiros Socorros"],
+    stats: { views: "1.1k", connections: "480", searches: "95" },
+    highlights: ["Destaque Operacional", "Instrutor de Táticas", "Comunitário do Ano"]
+  };
+  if (n.includes("ariane")) return {
+    name: "Ariane Souza", role: "Policial Civil / Investigadora", company: "Segurança Pública", location: "Belém, PA",
+    bio: "Investigadora focada em crimes financeiros e lavagem de dinheiro. Unindo perícia técnica e faro investigativo para servir ao estado.",
+    theme: "legal" as ThemeType, isVip: false, initials: "AS",
+    skills: ["Investigação", "Perícia", "Criminalística", "Análise de Dados"],
+    stats: { views: "1.5k", connections: "620", searches: "110" },
+    highlights: ["Certificação Anti-Fraude", "Caso 'Lavanderia' 2025", "Perita em Rastreamento"]
   };
 
-  // TECH THEME: Devs, Engineers, Scientists, Technicians
-  if (n.includes("levi") || n.includes("paulo") || n.includes("andre") || n.includes("falcone") || n.includes("issac") || n.includes("vicente") || n.includes("eros") || n.includes("gabriel cabreira") || n.includes("julie")) return {
-    name: name, role: n.includes("cabreira") ? "Cientista de Dados" : n.includes("eros") ? "Engenheiro Civil" : n.includes("vicente") ? "Técnico Especialista" : "Software Engineer",
-    company: n.includes("cabreira") ? "NASA Research" : "dvscodes", location: "Hub de Inovação",
-    bio: "Construindo o futuro através da tecnologia e da ciência. Especialista em resolver problemas complexos com soluções elegantes e escaláveis.",
-    theme: "tech" as ThemeType, isVip: n.includes("levi") || n.includes("cabreira"), initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Tech", "Engineering", "Data Science", "Innovation"],
-    stats: { views: "1.8k", connections: "540", searches: "120" }
+  // TECH & INNOVATION
+  if (n.includes("issac silva")) return {
+    name: "Isaac Silva", role: "Desenvolvedor Full Stack Sênior", company: "dvscodes", location: "Rio de Janeiro, RJ",
+    bio: "Arquiteto de sistemas apaixonado por código limpo e escalabilidade. Especialista em ecossistemas JavaScript/TypeScript e arquitetura serverless.",
+    theme: "tech" as ThemeType, isVip: true, initials: "IS",
+    skills: ["React", "Node.js", "Serverless", "Arquitetura"],
+    stats: { views: "4.1k", connections: "1.4k", searches: "320" },
+    highlights: ["MVP dvscodes 2025", "Speaker na JSConf", "Criador do 'Inclusion-UI'"]
+  };
+  if (n.includes("levi")) return {
+    name: "Levi Costa", role: "Backend Developer / Go Expert", company: "dvscodes", location: "Remoto",
+    bio: "Construindo motores de processamento de alta performance em Go e Rust. Focado em baixa latência e sistemas distribuídos.",
+    theme: "tech" as ThemeType, isVip: true, initials: "L",
+    skills: ["Go", "Rust", "Distributed Systems", "Cloud Engine"],
+    stats: { views: "2.8k", connections: "890", searches: "150" },
+    highlights: ["Contribuidor Core Go", "Microservices Expert", "Latência Zero Award"]
+  };
+  if (n.includes("gabriel cabreira")) return {
+    name: "Gabriel Cabreira", role: "Cientista de Dados / IA Researcher", company: "NASA Research", location: "Houston, TX",
+    bio: "Pesquisador em aprendizado de máquina aplicado à astrofísica. Traduzindo dados estelares em modelos preditivos que expandem nossa visão do cosmos.",
+    theme: "tech" as ThemeType, isVip: true, initials: "GC",
+    skills: ["Python", "Machine Learning", "Physics", "Big Data"],
+    stats: { views: "8.5k", connections: "2.1k", searches: "800" },
+    highlights: ["Prêmio NASA Innovation", "Publicação na Nature", "IA Discovery Pioneer"]
+  };
+  if (n.includes("julie")) return {
+    name: "Julie Wagner", role: "Sênior Rust Engineer", company: "dvscodes", location: "Palo Alto, CA",
+    bio: "Explorando os limites da segurança de memória com Rust. Focada em otimização de sistemas críticos e infraestrutura de hardware.",
+    theme: "tech" as ThemeType, isVip: true, initials: "JW",
+    skills: ["Rust", "Systems Engineering", "Security", "C++"],
+    stats: { views: "3.2k", connections: "1.1k", searches: "240" },
+    highlights: ["Rustacean of the Year", "Optimized Core 2026", "Security Lead"]
+  };
+  if (n.includes("andre") && !n.includes("andreza")) return {
+    name: "Andre Oliveira", role: "Cloud Architect / DevOps", company: "DevCloud Solutions", location: "Curitiba, PR",
+    bio: "Automatizando o impossível. Especialista em infraestrutura como código e pipelines de CI/CD que rodam na velocidade da luz.",
+    theme: "tech" as ThemeType, isVip: false, initials: "A",
+    skills: ["Kubernetes", "AWS", "Terraform", "CI/CD"],
+    stats: { views: "1.9k", connections: "540", searches: "130" },
+    highlights: ["AWS Certified Hero", "Docker Optimization Award", "DevOps Master"]
+  };
+  if (n.includes("paulo")) return {
+    name: "Paulo Mendes", role: "Java Solutions Architect", company: "Fintech Pro", location: "Belo Horizonte, MG",
+    bio: "Especialista em sistemas bancários de alta confiabilidade. Transformando requisitos financeiros em arquiteturas robustas e seguras.",
+    theme: "tech" as ThemeType, isVip: false, initials: "P",
+    skills: ["Java", "Spring Boot", "Microservices", "Fintech"],
+    stats: { views: "1.6k", connections: "480", searches: "90" },
+    highlights: ["Java Champion", "Arquitetura PIX 2.0", "Security First"]
+  };
+  if (n.includes("falcone")) return {
+    name: "Falcone Silva", role: "Cybersecurity Analyst", company: "ArmorTech", location: "Vila Velha, ES",
+    bio: "Defendendo perímetros digitais. Especialista em testes de invasão e proteção de dados contra ameaças persistentes avançadas.",
+    theme: "tech" as ThemeType, isVip: false, initials: "F",
+    skills: ["Pentest", "Infosec", "Crypto", "Python"],
+    stats: { views: "1.2k", connections: "390", searches: "70" },
+    highlights: ["Certified Hacker (CEH)", "Bug Bounty Top 10", "Firewall Expert"]
   };
 
-  // CREATIVE THEME: Creative, Bloggers, Singers, Streamers, Style, Marketing
-  if (n.includes("vitor") || n.includes("andreza") || n.includes("sofia") || n.includes("jade") || n.includes("kauan") || n.includes("joao pedro") || n.includes("julio") || n.includes("liana")) return {
-    name: name, role: n.includes("vitor") ? "Cantor" : n.includes("andreza") ? "Influenciadora" : n.includes("kauan") || n.includes("jade") ? "Streamer" : "Creative Director",
-    company: "Studio Creative", location: "Hub Criativo",
-    bio: "Criatividade sem limites. Transformando ideias em experiências visuais e sensoriais que inspiram e conectam.",
-    theme: "creative" as ThemeType, isVip: true, initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Design", "Content", "Marketing", "Arts"],
-    stats: { views: "12k", connections: "3.2k", searches: "450" }
+  // CREATIVE & MEDIA
+  if (n.includes("kauan")) return {
+    name: "Kauan Streamer", role: "Pro Gamer & Content Creator", company: "Independent", location: "Belo Horizonte, MG",
+    bio: "Criando entretenimento de alta qualidade através do streaming. Compartilhando gameplays épicas e construindo uma comunidade vibrante.",
+    theme: "creative" as ThemeType, isVip: true, initials: "K",
+    skills: ["Streaming", "Video Editing", "Gaming", "Branding"],
+    stats: { views: "25k", connections: "5.1k", searches: "1.5k" },
+    highlights: ["Top 10 Twitch BR", "Parceiro Oficial ProConnect", "Recorde de Views"]
+  };
+  if (n.includes("jade")) return {
+    name: "Jade Streaming", role: "Twitch Partner / Influencer", company: "Galaxy Squad", location: "Internet",
+    bio: "A maior hub de entretenimento live. Focada em talk shows, design de interiores virtual e engajamento comunitário em tempo real.",
+    theme: "creative" as ThemeType, isVip: true, initials: "JD",
+    skills: ["Live", "Social Media", "Community", "Entertainment"],
+    stats: { views: "18k", connections: "4.2k", searches: "1.1k" },
+    highlights: ["Socia de Honra ProConnect", "Trend Topic 2026", "Criatividade Premium"]
+  };
+  if (n.includes("andreza")) return {
+    name: "Andreza Blogueira", role: "Digital Influencer / Lifestyle", company: "Trendsetters", location: "Recife, PE",
+    bio: "Conectando marcas a pessoas de forma autêntica. Especialista em curadoria de estilo, viagens e inovação no mercado de beleza.",
+    theme: "creative" as ThemeType, isVip: true, initials: "AZ",
+    skills: ["Storytelling", "SEO", "Marketing", "Curadoria"],
+    stats: { views: "120k", connections: "15k", searches: "8.2k" },
+    highlights: ["Blogger of the Year", "Lançamento 'Trend2026'", "Embaixadora Glam"]
+  };
+  if (n.includes("vitor cerqueira")) return {
+    name: "Vitor Cerqueira", role: "Cantor & Compositor", company: "Art Records", location: "Salvador, BA",
+    bio: "A música como ponte entre o clássico e o moderno. Explorando novas sonoridades e emocionando públicos ao redor do Brasil.",
+    theme: "creative" as ThemeType, isVip: true, initials: "VC",
+    skills: ["Composição", "Performance", "Produção", "Vocal"],
+    stats: { views: "45k", connections: "8.5k", searches: "2.1k" },
+    highlights: ["Grammy Latino Nominee", "Turnê 'Inovação'", "Top Chart Artist"]
+  };
+  if (n.includes("sofia")) return {
+    name: "Sofia Designer", role: "Fashion Estilista / Designer", company: "Vogue Creative", location: "Milão / Remoto",
+    bio: "Redefinindo o conceito de alta costura com materiais sustentáveis. Unindo design clássico com inovação têxtil de 2026.",
+    theme: "creative" as ThemeType, isVip: true, initials: "S",
+    skills: ["Fashion Design", "Textiles", "Creativity", "Sustainability"],
+    stats: { views: "3.8k", connections: "1.2k", searches: "310" },
+    highlights: ["Seman de Moda de Milão", "Eco-Designer do Ano", "Vogue Featured"]
+  };
+  if (n.includes("joao pedro")) return {
+    name: "João Pedro Studio", role: "Master Hair Stylist / Visagista", company: "Studio VIP", location: "Fortaleza, CE",
+    bio: "Transformando a autoimagem através do visagismo. Especialista em cortes de alta precisão e colorimetria avançada.",
+    theme: "creative" as ThemeType, isVip: false, initials: "JP",
+    skills: ["Visagisimo", "Corte", "Atendimento Premium", "Colorimetria"],
+    stats: { views: "2.1k", connections: "940", searches: "160" },
+    highlights: ["Tesoura de Ouro 2025", "Mestre em Colometria", "Studio Referência"]
+  };
+  if (n.includes("julio")) return {
+    name: "Julio Marketing", role: "Performance Director", company: "AdAgency Pro", location: "Florianópolis, SC",
+    bio: "Métricas que contam histórias. Especialista em campanhas de alta conversão e análise comportamental em escala.",
+    theme: "creative" as ThemeType, isVip: false, initials: "J",
+    skills: ["Google Ads", "Analytics", "Copywriting", "Estratégia"],
+    stats: { views: "1.9k", connections: "520", searches: "110" },
+    highlights: ["Google Premier Partner", "Expert em CRO", "Data-Driven Strategy"]
+  };
+  if (n.includes("liana")) return {
+    name: "Liana Growth", role: "Growth Marketer / SEO", company: "Digital Launch", location: "Dublin, IE",
+    bio: "Escalando startups globalmente. Focada em SEO técnico, retenção de usuários e expansão de mercado no ecossistema europeu.",
+    theme: "creative" as ThemeType, isVip: false, initials: "LI",
+    skills: ["SEO", "User Growth", "Market Research", "Product"],
+    stats: { views: "2.5k", connections: "740", searches: "190" },
+    highlights: ["SEO of the Year 2025", "Growth Lead Europe", "Analytics Master"]
   };
 
-  // HEALTH THEME: Veterinarians
-  if (n.includes("veterinari") || n.includes("maximiliano") || n.includes("sarah")) return {
-    name: name, role: "Médico Veterinário", company: "Pet Health", location: "Clínica Veterinária",
-    bio: "Cuidando de quem não tem voz. Especialista em saúde animal com foco em medicina preventiva e bem-estar.",
-    theme: "health" as ThemeType, isVip: false, initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Medicina", "Cirurgia", "Cuidado Animal", "Bem-estar"],
-    stats: { views: "2.1k", connections: "890", searches: "130" }
+  // HEALTH
+  if (n.includes("sarah")) return {
+    name: "Sarah Miller", role: "Médica Veterinária Especialista", company: "Pet Health Global", location: "Toronto, CA",
+    bio: "Dedicada à saúde preventiva e bem-estar de animais domésticos. Especialista em diagnósticos por imagem e cuidados paliativos.",
+    theme: "health" as ThemeType, isVip: false, initials: "SM",
+    skills: ["Diagnóstico", "Cirurgia", "Cuidado Animal", "Medicina"],
+    stats: { views: "2.1k", connections: "890", searches: "130" },
+    highlights: ["Clínica Destaque 2025", "Especialista em Felinos", "Saúde Animal Award"]
+  };
+  if (n.includes("maximiliano")) return {
+    name: "Maximiliano Vet", role: "Veterinário de Animais Exóticos", company: "Wildlife Clinic", location: "Berlim, DE",
+    bio: "Referência no tratamento de aves e répteis. Comprometido com a conservação e medicina de espécies selvagens.",
+    theme: "health" as ThemeType, isVip: false, initials: "MX",
+    skills: ["Exóticos", "Biologia", "Resgate", "Cirurgia"],
+    stats: { views: "3.2k", connections: "1.1k", searches: "210" },
+    highlights: ["Conservacionista do Ano", "Resgate Wildlife Pioneer", "PhD em Exóticos"]
   };
 
-  // SERVICE THEME: Delivery, Industry, Agro
-  if (n.includes("aristotoles") || n.includes("davi oliveira") || n.includes("david kayke") || n.includes("piao") || n.includes("entregador")) return {
-    name: name, role: n.includes("aristotoles") ? "Logística & Entregas" : n.includes("davi oliveira") ? "Operador de Maquinário" : "Especialista em Campo",
-    company: "Operações Industriais", location: "Brasil",
-    bio: "Força e precisão nas operações diárias. Garantindo que a engrenagem do país continue girando com eficiência e segurança.",
-    theme: "service" as ThemeType, isVip: false, initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Operação", "Logística", "Precisão", "Agilidade"],
-    stats: { views: "900", connections: "240", searches: "45" }
+  // SERVICES & PRODUCTION
+  if (n.includes("vice") || n.includes("vicente")) return {
+    name: "Vicente Técnico", role: "Técnico Especialista em Redes", company: "Tech Support BR", location: "São Paulo, SP",
+    bio: "Solucionando problemas de infraestrutura de rede em tempo recorde. Especialista em hardware crítico e conectividade 6G.",
+    theme: "service" as ThemeType, isVip: false, initials: "V",
+    skills: ["Hardware", "Infra Redes", "Suporte", "Manutenção"],
+    stats: { views: "1.1k", connections: "320", searches: "60" },
+    highlights: ["Nível Diamante Suporte", "Especialista 6G", "Hardware Master"]
+  };
+  if (n.includes("davi oliveira")) return {
+    name: "Davi Oliveira", role: "Operador de Maquinário Pesado", company: "Indústria X", location: "Santos, SP",
+    bio: "Expertise técnica na operação de guindastes e sistemas industriais complexos. Focado em segurança operacional e produtiva no setor portuário.",
+    theme: "service" as ThemeType, isVip: false, initials: "DO",
+    skills: ["Mecânica", "Operação", "Segurança Industrial", "Logística"],
+    stats: { views: "1.3k", connections: "280", searches: "45" },
+    highlights: ["Operação Segura 2025", "Eficiência Portuária", "Mestre Industrial"]
+  };
+  if (n.includes("david kayke")) return {
+    name: "David Kayke Peão", role: "Gestor Agro / Campo Expert", company: "Fazenda AgroForte", location: "Cuiabá, MT",
+    bio: "Liderando a produção agrícola com tecnologia de ponta. Unindo a tradição do campo com as inovações do agronegócio digital.",
+    theme: "service" as ThemeType, isVip: false, initials: "DK",
+    skills: ["AgroTech", "Gestão", "Pecuária", "Máquinas"],
+    stats: { views: "2.4k", connections: "410", searches: "180" },
+    highlights: ["Fazenda Digital do Ano", "Líder Agrotech", "Inovação no Campo"]
+  };
+  if (n.includes("aristotoles")) return {
+    name: "Aristóteles Silva", role: "Gestor de Logística / Entregador", company: "Flash Delivery", location: "Porto Alegre, RS",
+    bio: "Otimizando rotas e garantindo entregas perfeitas. Especialista na última milha da logística urbana com foco em eficiência.",
+    theme: "service" as ThemeType, isVip: false, initials: "AS",
+    skills: ["Logística", "Gestão Rotas", "Agilidade", "Transporte"],
+    stats: { views: "900", connections: "220", searches: "40" },
+    highlights: ["Entrega Recorde 2026", "Logística Urbana Sênior", "Flash Delivery Ace"]
   };
 
-  // Default fallback for others (Professors, etc.)
+  // EDUCATION & ACADEMIC
+  if (n.includes("diogo") || n.includes("predro victor") || n.includes("calebe") || n.includes("professor")) return {
+    name: name, role: n.includes("diogo") ? "Professor de História" : n.includes("predro") ? "Especialista em Robótica" : "Educador Sênior",
+    company: n.includes("predro") ? "SENAI Hub" : "University Tech", location: "Brasil",
+    bio: "Educando as próximas gerações para o futuro digital. Acreditamos que o conhecimento é a principal ferramenta de inclusão e progresso.",
+    theme: "default" as ThemeType, isVip: false, initials: name.slice(0, 2).toUpperCase(),
+    skills: ["Educação", "Didática", "Metodologias Ativas", "Ensino"],
+    stats: { views: "3.2k", connections: "890", searches: "240" },
+    highlights: ["Educador Nota 10", "Destaque Acadêmico", "Inovação Educacional"]
+  };
+
+  if (n.includes("eros")) return {
+    name: "Eros Martins", role: "Engenheiro Civil / Estruturas", company: "ConstruTech SA", location: "Goiânia, GO",
+    bio: "Expert em cálculos estruturais complexos e grandes obras. Focado em construção sustentável e novos materiais de 2026.",
+    theme: "tech" as ThemeType, isVip: false, initials: "E",
+    skills: ["Cálculo", "Projetos", "Sustentabilidade", "Obras"],
+    stats: { views: "1.4k", connections: "450", searches: "80" },
+    highlights: ["Sustentabilidade em Obras", "Estrutura do Ano", "Inovação Civil"]
+  };
+
+  // Default fallback
   return {
     name: name,
-    role: n.includes("professor") || n.includes("diogo") || n.includes("pedro") || n.includes("calebe") ? "Educador Senior" : "Membro da Rede",
-    company: "Senior Connect",
+    role: "Profissional na dvscodes Network",
+    company: "Conectado",
     location: "Brasil",
-    bio: "Compartilhando conhecimento e construindo pontes entre gerações. A educação é o caminho para a transformação digital inclusiva.",
-    theme: "service" as ThemeType,
+    bio: "Entusiasta de tecnologia e conexões humanas. Buscando colaborar em projetos inovadores e expandir horizontes no ProConnect.",
+    theme: "default" as ThemeType,
     isVip: false,
     initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Educação", "Comunicação", "Liderança", "Ensino"],
-    stats: { views: "1.2k", connections: "300", searches: "60" }
+    skills: ["Soft Skills", "Colaboração", "Netwoking", "Adaptabilidade"],
+    stats: { views: "450", connections: "120", searches: "25" },
+    highlights: ["Iniciante Premium", "Conectado", "Pioneer"]
   };
 };
 
@@ -284,6 +469,26 @@ const Profile: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* HIGHLIGHTS SECTION */}
+        {person.highlights && (
+          <Card className={cn("p-6", cardStyle)}>
+            <div className="flex items-center gap-3 mb-4">
+              <Sparkles className={cn("h-6 w-6", theme.accent)} />
+              <h3 className={cn("font-black text-foreground text-xl font-[Space_Grotesk]")}>Destaques</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {person.highlights.map((h, i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border/40 group hover:border-primary/50 transition-all">
+                  <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center bg-background shadow-sm")}>
+                    <Award className={cn("h-4 w-4", theme.accent)} />
+                  </div>
+                  <span className="font-bold text-sm text-foreground/90">{h}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* BIO SECTION */}
         <Card className={cn("p-6", cardStyle)}>
