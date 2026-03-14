@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,6 +66,7 @@ const networkNav = [
 ];
 
 const Network: React.FC = () => {
+  const navigate = useNavigate();
   const { seniorMode, highContrast } = useAccessibility();
   const { speak } = useTextToSpeech();
   const { toast } = useToast();
@@ -273,9 +275,12 @@ const Network: React.FC = () => {
                         : "bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800"
                     )} />
                     {/* Body */}
-                    <div className="px-4 pb-4 flex flex-col items-center text-center -mt-7">
+                    <div 
+                      className="px-4 pb-4 flex flex-col items-center text-center -mt-7 cursor-pointer group/card"
+                      onClick={() => navigate(`/profile/${person.name}`)}
+                    >
                       <Avatar className={cn(
-                        "h-14 w-14 border-4 border-card shadow-lg mb-2 relative z-10",
+                        "h-14 w-14 border-4 border-card shadow-lg mb-2 relative z-10 transition-transform group-hover/card:scale-110",
                         seniorMode && "h-16 w-16",
                         person.isVip && "border-indigo-300 dark:border-indigo-700"
                       )}>
@@ -288,7 +293,7 @@ const Network: React.FC = () => {
                       </Avatar>
 
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <h4 className={cn("font-bold text-foreground leading-tight line-clamp-2", seniorMode ? "text-lg" : "text-sm")}>
+                        <h4 className={cn("font-bold text-foreground leading-tight line-clamp-2 group-hover/card:text-primary transition-colors", seniorMode ? "text-lg" : "text-sm")}>
                           {person.name}
                         </h4>
                         {person.isVerified && (

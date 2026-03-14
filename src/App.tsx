@@ -44,7 +44,7 @@ const AppRoutes = () => (
     <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
     <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
       <Route path="/" element={<Index />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/profile/:name?" element={<Profile />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="/jobs" element={<Jobs />} />
       <Route path="/network" element={<Network />} />

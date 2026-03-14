@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSeniorMode } from "@/contexts/SeniorModeContext";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,6 +46,7 @@ const mockProfessionals: Professional[] = [
 ];
 
 const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
   const { seniorMode } = useSeniorMode();
   const [query, setQuery] = useState("");
 
@@ -87,37 +89,43 @@ const SearchPage: React.FC = () => {
             <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className={cn("h-12 w-12", seniorMode && "h-16 w-16")}>
-                    <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
-                      {pro.name.split(" ").map((n) => n[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn("font-semibold text-foreground truncate", seniorMode && "text-lg")}>
-                      {pro.name}
-                    </p>
-                    <p className={cn("text-sm text-muted-foreground", seniorMode && "text-base")}>
-                      {pro.title} • {pro.location}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {pro.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="secondary"
-                          className={cn("text-xs", seniorMode && "text-sm px-3")}
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
+                  <div 
+                    className="flex flex-1 items-center gap-4 cursor-pointer group/item"
+                    onClick={() => navigate(`/profile/${pro.name}`)}
+                  >
+                    <Avatar className={cn("h-12 w-12 group-hover/item:scale-105 transition-transform", seniorMode && "h-16 w-16")}>
+                      <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
+                        {pro.name.split(" ").map((n) => n[0]).join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn("font-semibold text-foreground truncate group-hover/item:text-primary transition-colors", seniorMode && "text-lg")}>
+                        {pro.name}
+                      </p>
+                      <p className={cn("text-sm text-muted-foreground", seniorMode && "text-base")}>
+                        {pro.title} • {pro.location}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {pro.skills.map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className={cn("text-xs", seniorMode && "text-sm px-3")}
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     size={seniorMode ? "lg" : "sm"}
                     className="gap-2 shrink-0"
+                    onClick={() => navigate(`/profile/${pro.name}`)}
                   >
                     <UserPlus className={cn("h-4 w-4", seniorMode && "h-5 w-5")} />
-                    {seniorMode ? "Conectar" : ""}
+                    {seniorMode ? "Ver Perfil" : "Ver"}
                   </Button>
                 </div>
               </CardContent>
