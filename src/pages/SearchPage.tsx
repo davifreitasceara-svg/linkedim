@@ -19,6 +19,11 @@ interface Professional {
 }
 
 const mockProfessionals: Professional[] = [
+  { id: "e-l-1", name: "eduarda leal", title: "delegada federal", skills: ["Investigação", "Segurança", "Direito"], location: "Brasília" },
+  { id: "i-s-1", name: "issac silva", title: "Desenvolvedor Full Stack", skills: ["React", "Node.js", "TypeScript"], location: "Rio de Janeiro" },
+  { id: "k-1", name: "kauan", title: "stremer", skills: ["Gaming", "Streaming", "Conteúdo"], location: "Belo Horizonte" },
+  { id: "g-1", name: "gabriel", title: "policial", skills: ["Tática", "Segurança Pública"], location: "Curitiba" },
+  { id: "a-r-1", name: "aristotoles", title: "entregador", skills: ["Logística", "Agilidade"], location: "Porto Alegre" },
   { id: "v-1", name: "vicente", title: "técnico", skills: ["Hardware", "Redes"], location: "São Paulo" },
   { id: "l-1", name: "levi", title: "programador", skills: ["React", "Go"], location: "Rio de Janeiro" },
   { id: "do-1", name: "davi oliveira", title: "maquinário", skills: ["Mecânica", "Operação"], location: "Santos" },

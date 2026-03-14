@@ -126,8 +126,8 @@ const mockStories = [
   { id: 7, name: "Beatriz", logo: "BL", hasStory: false }
 ];
 
-const names = ["vicente", "levi", "davi oliveira", "isadora", "paulo", "Andre", "andreza", "sofia", "diogo", "falcone", "joao pedro", "vitor cerqueira", "eros", "jade", "david kayke", "julio", "predro victor", "ariane", "calebe", "Gabriel Cabreira", "Julie", "Liana", "Maximiliano", "Sarah"];
-const logos = ["V", "L", "DO", "I", "P", "A", "AZ", "S", "D", "F", "JP", "VC", "E", "JD", "DK", "J", "PV", "AR", "C", "GC", "JU", "LI", "MX", "SA"];
+const names = ["eduarda leal", "issac silva", "kauan", "gabriel", "aristotoles", "vicente", "levi", "davi oliveira", "isadora", "paulo", "Andre", "andreza", "sofia", "diogo", "falcone", "joao pedro", "vitor cerqueira", "eros", "jade", "david kayke", "julio", "predro victor", "ariane", "calebe", "Gabriel Cabreira", "Julie", "Liana", "Maximiliano", "Sarah"];
+const logos = ["EL", "IS", "K", "G", "AR", "V", "L", "DO", "I", "P", "A", "AZ", "S", "D", "F", "JP", "VC", "E", "JD", "DK", "J", "PV", "AR", "C", "GC", "JU", "LI", "MX", "SA"];
 const topics = [
   "O mercado de TI em 2026 está incrível!",
   "Dica do dia: Use Framer Motion para animações fluidas.",

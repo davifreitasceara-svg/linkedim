@@ -30,6 +30,11 @@ interface Person {
 
 const suggestions: Person[] = [
   { name: "dvscodes IA Recruiter", role: "Recrutamento Automatizado Premium", company: "dvscodes", mutual: 42, isVip: true, isVerified: true, logo: "dvs", tags: ["IA", "Recrutamento", "UX"] },
+  { name: "eduarda leal", role: "Delegada Federal", company: "Segurança Pública", mutual: 25, isVip: true, isVerified: true, logo: "EL", tags: ["Investigação", "Direito"] },
+  { name: "issac silva", role: "Desenvolvedor Full Stack", company: "dvscodes", mutual: 18, logo: "IS", tags: ["React", "Node.js"] },
+  { name: "kauan", role: "Streamer", company: "Twitch Partner", mutual: 150, logo: "K", tags: ["Gaming", "Live"] },
+  { name: "gabriel", role: "Policial", company: "Segurança Pública", mutual: 12, logo: "G", tags: ["Tática", "Segurança"] },
+  { name: "aristotoles", role: "Entregador", company: "Logística Express", mutual: 5, logo: "AR", tags: ["Logística", "Agilidade"] },
   { name: "vicente", role: "Técnico", company: "Assistência Tech", mutual: 15, logo: "V", tags: ["Hardware", "Manutenção"] },
   { name: "levi", role: "Programador", company: "dvscodes", mutual: 22, isVerified: true, logo: "L", tags: ["React", "Go", "Cloud"] },
   { name: "davi oliveira", role: "Maquinário", company: "Indústria X", mutual: 5, logo: "DO", tags: ["Operação", "Mecânica"] },

@@ -93,59 +93,67 @@ const getPersonData = (name: string | undefined, currentUser: { user_metadata?: 
 
   const n = name.toLowerCase();
   
-  if (n.includes("isadora")) return {
-    name: "Isadora Lima", role: "Advogada Criminalista", company: "Direito Digital & Associados", location: "Brasília, DF",
-    bio: "Especialista em Direito Digital e Cibercrime. Defendendo a ética e a justiça no ambiente virtual desde 2018.",
-    theme: "legal" as ThemeType, isVip: true, initials: "IL",
-    skills: ["Direito Digital", "LGPD", "Compliance", "Mediação"],
+  // LEGAL THEME: Lawyers, Delegates, Police
+  if (n.includes("isadora") || n.includes("eduarda") || n.includes("delegada") || n.includes("policial") || n.includes("ariane") || n.includes("gabriel") && !n.includes("cabreira")) return {
+    name: name, role: n.includes("isadora") ? "Advogada Criminalista" : n.includes("eduarda") ? "Delegada Federal" : "Oficial de Segurança",
+    company: n.includes("isadora") ? "Direito Digital & Associados" : "Segurança Pública", location: "Brasília, DF",
+    bio: "Comprometimento com a justiça e a segurança. Atuando com ética e rigor técnico para proteger a sociedade no ambiente real e digital.",
+    theme: "legal" as ThemeType, isVip: n.includes("eduarda") || n.includes("isadora"), initials: name.slice(0, 2).toUpperCase(),
+    skills: ["Direito", "Investigação", "Segurança", "Compliance"],
     stats: { views: "3.4k", connections: "1.2k", searches: "210" }
   };
 
-  if (n.includes("levi") || n.includes("paulo") || n.includes("andre") || n.includes("falcone")) return {
-    name: name, role: "Software Engineer", company: "dvscodes", location: "Remoto",
-    bio: "Transformando café em código performático e escalável. Especialista em arquiteturas modernas e sistemas distribuídos.",
-    theme: "tech" as ThemeType, isVip: n.includes("levi"), initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Node.js", "React", "Docker", "Kubernetes"],
-    stats: { views: "850", connections: "310", searches: "45" }
+  // TECH THEME: Devs, Engineers, Scientists, Technicians
+  if (n.includes("levi") || n.includes("paulo") || n.includes("andre") || n.includes("falcone") || n.includes("issac") || n.includes("vicente") || n.includes("eros") || n.includes("gabriel cabreira") || n.includes("julie")) return {
+    name: name, role: n.includes("cabreira") ? "Cientista de Dados" : n.includes("eros") ? "Engenheiro Civil" : n.includes("vicente") ? "Técnico Especialista" : "Software Engineer",
+    company: n.includes("cabreira") ? "NASA Research" : "dvscodes", location: "Hub de Inovação",
+    bio: "Construindo o futuro através da tecnologia e da ciência. Especialista em resolver problemas complexos com soluções elegantes e escaláveis.",
+    theme: "tech" as ThemeType, isVip: n.includes("levi") || n.includes("cabreira"), initials: name.slice(0, 2).toUpperCase(),
+    skills: ["Tech", "Engineering", "Data Science", "Innovation"],
+    stats: { views: "1.8k", connections: "540", searches: "120" }
   };
 
-  if (n.includes("vitor") || n.includes("andreza") || n.includes("sofia") || n.includes("jade")) return {
-    name: name, role: n.includes("cantor") ? "Cantor & Compositor" : n.includes("blogueira") ? "Content Creator" : "Estilista / Creative",
-    company: "Studio Creative", location: "São Paulo, SP",
-    bio: "A arte é a expressão da alma. Criando experiências sensoriais e visuais que conectam pessoas ao redor do mundo.",
+  // CREATIVE THEME: Creative, Bloggers, Singers, Streamers, Style, Marketing
+  if (n.includes("vitor") || n.includes("andreza") || n.includes("sofia") || n.includes("jade") || n.includes("kauan") || n.includes("joao pedro") || n.includes("julio") || n.includes("liana")) return {
+    name: name, role: n.includes("vitor") ? "Cantor" : n.includes("andreza") ? "Influenciadora" : n.includes("kauan") || n.includes("jade") ? "Streamer" : "Creative Director",
+    company: "Studio Creative", location: "Hub Criativo",
+    bio: "Criatividade sem limites. Transformando ideias em experiências visuais e sensoriais que inspiram e conectam.",
     theme: "creative" as ThemeType, isVip: true, initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Creative Direction", "Social Media", "Adobe Suite", "Branding"],
-    stats: { views: "15k", connections: "5.4k", searches: "1.2k" }
+    skills: ["Design", "Content", "Marketing", "Arts"],
+    stats: { views: "12k", connections: "3.2k", searches: "450" }
   };
 
+  // HEALTH THEME: Veterinarians
   if (n.includes("veterinari") || n.includes("maximiliano") || n.includes("sarah")) return {
-    name: name, role: "Médico Veterinário", company: "Pet Health Specialist", location: "Curitiba, PR",
-    bio: "Dedicado ao bem-estar animal e à saúde preventiva. Porque cada vida importa, independentemente do tamanho.",
+    name: name, role: "Médico Veterinário", company: "Pet Health", location: "Clínica Veterinária",
+    bio: "Cuidando de quem não tem voz. Especialista em saúde animal com foco em medicina preventiva e bem-estar.",
     theme: "health" as ThemeType, isVip: false, initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Medicina Veterinária", "Cirurgia", "Diagnóstico", "Cuidado Animal"],
+    skills: ["Medicina", "Cirurgia", "Cuidado Animal", "Bem-estar"],
     stats: { views: "2.1k", connections: "890", searches: "130" }
   };
 
-  if (n.includes("policial") || n.includes("ariane") || n.includes("delegada") || n.includes("gabriel")) return {
-    name: name, role: n.includes("delegada") ? "Delegada Federal" : "Oficial de Segurança", company: "Segurança Pública", location: "Brasília, DF",
-    bio: "Comprometido com a ordem e a proteção da sociedade. Uso de tecnologia e inteligência para garantir um ambiente mais seguro para todos.",
-    theme: "legal" as ThemeType, isVip: n.includes("delegada"), initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Estratégia", "Tática", "Investigação", "Liderança"],
-    stats: { views: "1.2k", connections: "500", searches: "180" }
+  // SERVICE THEME: Delivery, Industry, Agro
+  if (n.includes("aristotoles") || n.includes("davi oliveira") || n.includes("david kayke") || n.includes("piao") || n.includes("entregador")) return {
+    name: name, role: n.includes("aristotoles") ? "Logística & Entregas" : n.includes("davi oliveira") ? "Operador de Maquinário" : "Especialista em Campo",
+    company: "Operações Industriais", location: "Brasil",
+    bio: "Força e precisão nas operações diárias. Garantindo que a engrenagem do país continue girando com eficiência e segurança.",
+    theme: "service" as ThemeType, isVip: false, initials: name.slice(0, 2).toUpperCase(),
+    skills: ["Operação", "Logística", "Precisão", "Agilidade"],
+    stats: { views: "900", connections: "240", searches: "45" }
   };
 
-  // Default fallback for others
+  // Default fallback for others (Professors, etc.)
   return {
     name: name,
-    role: "Profissional Multidisciplinar",
-    company: "Senior Connect Network",
+    role: n.includes("professor") || n.includes("diogo") || n.includes("pedro") || n.includes("calebe") ? "Educador Senior" : "Membro da Rede",
+    company: "Senior Connect",
     location: "Brasil",
-    bio: "Membro ativo da comunidade ProConnect. Buscando conexões valiosas e crescimento profissional constante na nova economia digital.",
+    bio: "Compartilhando conhecimento e construindo pontes entre gerações. A educação é o caminho para a transformação digital inclusiva.",
     theme: "service" as ThemeType,
     isVip: false,
     initials: name.slice(0, 2).toUpperCase(),
-    skills: ["Comunicação", "Liderança", "Negociação", "Estratégia"],
-    stats: { views: "450", connections: "120", searches: "25" }
+    skills: ["Educação", "Comunicação", "Liderança", "Ensino"],
+    stats: { views: "1.2k", connections: "300", searches: "60" }
   };
 };
 
