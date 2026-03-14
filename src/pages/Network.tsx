@@ -54,6 +54,8 @@ const Network: React.FC = () => {
   const [people, setPeople] = useState<Person[]>(suggestions);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"todos" | "vip" | "verificados">("todos");
+  const [activeTab, setActiveTab] = useState("Conexões");
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const cardStyle = highContrast
     ? "border-2 border-primary bg-background shadow-none"
@@ -77,6 +79,25 @@ const Network: React.FC = () => {
     toast({ title: "Convite enviado! 🤝", description: `Você se conectou com ${name}` });
   };
 
+  const handleSidebarTab = (label: string) => {
+    setActiveTab(label);
+    toast({ title: label, description: `Acessando área de ${label}.` });
+  };
+
+  const handleSeeAll = () => {
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      const more: Person[] = [
+        { name: "Guilherme Santos", role: "Mobile Developer", company: "Nubank", mutual: 14, isVerified: true, logo: "GS", tags: ["React Native", "Swift"] },
+        { name: "Carla Diniz", role: "Product Designer", company: "Globo", mutual: 21, isVip: true, logo: "CD", tags: ["UI/UX", "Acessibilidade"] },
+        { name: "Felipe Almeida", role: "Fullstack Engineer", company: "C6 Bank", mutual: 3, logo: "FA", tags: ["Node.js", "React"] }
+      ];
+      setPeople([...people, ...more]);
+      setIsLoadingMore(false);
+      toast({ title: "Novas Sugestões", description: "Mais conexões adicionadas pelo algoritmo da IA." });
+    }, 1000);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 max-w-7xl mx-auto pb-20">
 
@@ -95,21 +116,22 @@ const Network: React.FC = () => {
             {networkNav.map((item, i) => (
               <button
                 key={i}
+                onClick={() => handleSidebarTab(item.label)}
                 className={cn(
                   "flex items-center justify-between w-full px-5 py-3 hover:bg-muted/40 cursor-pointer transition-colors text-muted-foreground hover:text-foreground font-medium group",
                   seniorMode && "py-4",
-                  i === 1 && "text-foreground bg-primary/5"
+                  activeTab === item.label && "text-foreground bg-primary/5"
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <item.icon className={cn("w-5 h-5", seniorMode && "w-6 h-6", i === 1 && "text-primary")} />
-                  <span className={cn("text-sm", seniorMode && "text-base", i === 1 && "font-bold text-foreground")}>
+                  <item.icon className={cn("w-5 h-5", seniorMode && "w-6 h-6", activeTab === item.label && "text-primary")} />
+                  <span className={cn("text-sm", seniorMode && "text-base", activeTab === item.label && "font-bold text-foreground")}>
                     {item.label}
                   </span>
                 </div>
                 <span className={cn(
                   "text-sm font-black px-2 py-0.5 rounded-full",
-                  i === 1 ? "bg-primary text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                  activeTab === item.label ? "bg-primary text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                 )}>
                   {item.count}
                 </span>
@@ -195,8 +217,14 @@ const Network: React.FC = () => {
               Pessoas que você talvez conheça
               <span className="ml-2 text-muted-foreground font-medium text-sm">({filtered.length})</span>
             </h3>
-            <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/10">
-              Ver todos →
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary font-bold hover:bg-primary/10"
+              onClick={handleSeeAll}
+              disabled={isLoadingMore}
+            >
+              {isLoadingMore ? "Carregando..." : "Ver todos →"}
             </Button>
           </div>
 

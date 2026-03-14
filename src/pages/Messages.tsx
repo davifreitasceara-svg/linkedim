@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Search, MoreHorizontal, Video, Edit, Send, Volume2, Mic, Sparkles, Check, CheckCheck, Phone, Smile, Image, Paperclip } from "lucide-react";
+import { Search, MoreHorizontal, Video, Edit, Send, Volume2, Mic, Sparkles, Check, CheckCheck, Phone, Smile, Image, Paperclip, X, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -88,6 +88,9 @@ const Messages: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  
+  // Call Modals State
+  const [activeCall, setActiveCall] = useState<"audio" | "video" | null>(null);
   
   // Audio State
   const [isRecording, setIsRecording] = useState(false);
@@ -221,6 +224,22 @@ const Messages: React.FC = () => {
     setIsTyping(false);
   };
 
+  const handleNewChat = () => {
+    const newChat: Chat = {
+      id: Date.now(),
+      name: "Nova Conversa",
+      role: "Conexão",
+      msg: "",
+      time: "Agora",
+      unread: 0,
+      isVip: false,
+      online: true,
+      messages: []
+    };
+    setChats([newChat, ...chats]);
+    setActiveChat(newChat);
+  };
+
   const totalUnread = chats.reduce((acc, c) => acc + c.unread, 0);
 
   const cardStyle = highContrast
@@ -250,7 +269,12 @@ const Messages: React.FC = () => {
               <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50">
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-9 w-9 rounded-full hover:bg-muted/50"
+                onClick={handleNewChat}
+              >
                 <Edit className="h-5 w-5" />
               </Button>
             </div>
@@ -351,10 +375,10 @@ const Messages: React.FC = () => {
                 onClick={() => speak(`Conversa com ${activeChat.name}`)}>
                 <Volume2 className="h-4 w-4 text-primary" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50" onClick={() => setActiveCall("audio")}>
                 <Phone className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/50" onClick={() => setActiveCall("video")}>
                 <Video className="h-4 w-4" />
               </Button>
             </div>
@@ -547,6 +571,45 @@ const Messages: React.FC = () => {
             )}
           </div>
         </div>
+        
+        {/* Modals Simulation for Calls */}
+        <AnimatePresence>
+          {activeCall && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+            >
+              <Card className="w-full max-w-sm bg-card border-border/50 shadow-2xl overflow-hidden">
+                <div className="p-6 flex flex-col items-center text-center">
+                  <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20">
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black">{getInitials(activeChat)}</AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-xl font-bold mb-1">{activeChat.name}</h3>
+                  <p className="text-muted-foreground mb-6 flex items-center gap-2">
+                    {activeCall === "video" ? <Video className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
+                    Chamando...
+                  </p>
+                  
+                  <div className="flex gap-4">
+                    <Button 
+                      onClick={() => setActiveCall(null)}
+                      className="rounded-full h-14 w-14 bg-red-500 hover:bg-red-600 text-white shadow-lg"
+                    >
+                      <Phone className="w-6 h-6 rotate-135" /> {/* Simulate hangup */}
+                    </Button>
+                    <Button 
+                      className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 text-white shadow-lg"
+                    >
+                      <Mic className="w-6 h-6" />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Card>
     </div>
   );

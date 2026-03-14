@@ -9,7 +9,7 @@ import {
   Heart, MessageCircle, Send,
   Bookmark, Sparkles, MoreHorizontal,
   ThumbsUp, Globe, BadgeCheck, Play, Pause,
-  Headphones, Video, Zap, TrendingUp, Briefcase, X
+  Headphones, Video, Zap, TrendingUp, Briefcase, X, Image
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -146,9 +146,18 @@ const Index: React.FC = () => {
   const [showSurroundFx, setShowSurroundFx] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
+  // New Post State
+  const [newPostText, setNewPostText] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
+
+  // Post Interactions State
+  const [expandedComments, setExpandedComments] = useState<string | null>(null);
+  const [newCommentText, setNewCommentText] = useState("");
+  
   // Audio Player State
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [audioProgress, setAudioProgress] = useState<Record<string, number>>({});
+
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "VC";
   const fullName = user?.user_metadata?.full_name || "Você";
@@ -238,6 +247,88 @@ const Index: React.FC = () => {
       setPlayingAudio(null);
     } else {
       setPlayingAudio(id);
+    }
+  };
+
+  const handleCreatePost = () => {
+    if (!newPostText.trim()) return;
+    setIsPosting(true);
+    
+    setTimeout(() => {
+      const newPost: Post = {
+        id: `user-${Date.now()}`,
+        author: fullName,
+        authorLogo: initials,
+        title: user?.user_metadata?.job_title || "Profissional na dvscodes",
+        content: newPostText,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        liked: false,
+        bookmarked: false,
+        timeAgo: "Agora",
+        isVerified: true
+      };
+      
+      setPosts([newPost, ...posts]);
+      setNewPostText("");
+      setIsPosting(false);
+      toast({
+        title: "Publicado!",
+        description: "Sua publicação está visível na sua rede.",
+      });
+    }, 800);
+  };
+
+  const handlePostComment = (postId: string) => {
+    if (!newCommentText.trim()) return;
+    
+    setPosts(prev => prev.map(p => {
+      if (p.id === postId) {
+        const newComments = p.commentsList || [];
+        return {
+          ...p,
+          comments: p.comments + 1,
+          commentsList: [...newComments, {
+            id: `cmd-${Date.now()}`,
+            author: fullName,
+            initials: initials,
+            text: newCommentText,
+            time: "Agora"
+          }]
+        };
+      }
+      return p;
+    }));
+    setNewCommentText("");
+  };
+
+  const handleShare = (id: string, author: string) => {
+    toast({
+      title: "Link Copiado!",
+      description: `Link da publicação de ${author} copiado para área de transferência.`,
+    });
+    setPosts(prev => prev.map(p => p.id === id ? { ...p, shares: p.shares + 1 } : p));
+  };
+
+  const toggleBookmark = (id: string) => {
+    setPosts(prev => prev.map(p => {
+      if (p.id === id) {
+        const isBookmarked = !p.bookmarked;
+        if (isBookmarked) {
+          toast({ title: "Salvo", description: "Publicação salva nos seus Itens." });
+        }
+        return { ...p, bookmarked: isBookmarked };
+      }
+      return p;
+    }));
+  };
+
+  const toggleComments = (id: string) => {
+    if (expandedComments === id) {
+      setExpandedComments(null);
+    } else {
+      setExpandedComments(id);
     }
   };
 

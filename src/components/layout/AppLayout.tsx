@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Home, User, Search, LogOut, Briefcase, Bell, MessageSquare, Users, X, Sparkles } from "lucide-react";
+import { Home, User, Search, LogOut, Briefcase, Bell, MessageSquare, Users, X, Sparkles, Settings, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AIAssistant from "@/components/ui/AIAssistant";
 import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const navItems = [
   { label: "Início",       icon: Home,          path: "/" },
@@ -23,8 +24,23 @@ const AppLayout: React.FC = () => {
   const { seniorMode } = useAccessibility();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
+  
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      toast({
+        title: "Busca Realizada",
+        description: `Buscando por "${searchValue}"...`,
+      });
+      setSearchOpen(false);
+      navigate("/network"); // Fallback to network tab as "search results"
+    }
+  };
 
   const initials = user?.email?.slice(0, 2).toUpperCase() || "PC";
 
@@ -51,14 +67,16 @@ const AppLayout: React.FC = () => {
             </button>
 
             {/* Search — Desktop */}
-            <div className="hidden md:flex relative ml-1">
+            <form onSubmit={handleSearchSubmit} className="hidden md:flex relative ml-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 type="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 placeholder="Pesquisar profissionais, vagas..."
                 className="w-60 pl-9 bg-muted/60 border-border/60 rounded-xl h-9 text-sm transition-all focus:w-80 focus:bg-background font-medium"
               />
-            </div>
+            </form>
           </div>
 
             {/* Desktop Nav */}
@@ -132,35 +150,65 @@ const AppLayout: React.FC = () => {
               </div>
             )}
 
-            {/* Profile Button */}
-            <button
-              onClick={() => navigate("/profile")}
-              className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors px-2"
-              aria-label="Seu perfil"
-            >
-              <Avatar className={cn(
-                "h-8 w-8 ring-2 ring-transparent hover:ring-primary/40 transition-all border border-border/60",
-                seniorMode && "h-10 w-10"
-              )}>
-                <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white text-xs font-bold">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <span className={cn("text-[10px] font-semibold hidden lg:flex items-center gap-0.5", seniorMode && "text-xs")}>
-                Eu <span className="opacity-60 text-[8px]">▾</span>
-              </span>
-            </button>
+            {/* Profile Menu Dropdown Container */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-foreground transition-colors px-2"
+                aria-label="Abrir menu do perfil"
+              >
+                <Avatar className={cn(
+                  "h-8 w-8 ring-2 transition-all border border-border/60",
+                  profileOpen ? "ring-primary/60 scale-105" : "ring-transparent hover:ring-primary/40",
+                  seniorMode && "h-10 w-10"
+                )}>
+                  <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white text-xs font-bold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className={cn("text-[10px] font-semibold hidden lg:flex items-center gap-0.5", seniorMode && "text-xs")}>
+                  Eu <span className="opacity-60 text-[8px] transform transition-transform" style={{ rotate: profileOpen ? '180deg' : '0deg' }}>▾</span>
+                </span>
+              </button>
 
-            {/* Logout */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={signOut}
-              className={cn("h-9 w-9 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors", seniorMode && "h-11 w-11")}
-              aria-label="Sair da conta"
-            >
-              <LogOut className={cn("h-4 w-4", seniorMode && "h-5 w-5")} />
-            </Button>
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-[calc(100%+12px)] w-56 bg-card border border-border/60 rounded-2xl shadow-xl flex flex-col overflow-hidden z-[100]"
+                  >
+                    <div className="p-4 border-b border-border/60 bg-muted/20">
+                      <p className="font-bold text-sm truncate">{user?.user_metadata?.full_name || "Você"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                    </div>
+                    
+                    <button onClick={() => { setProfileOpen(false); navigate("/profile"); }} className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium hover:bg-muted/40 transition-colors text-left">
+                      <User className="h-4 w-4" /> Ver Perfil
+                    </button>
+                    
+                    <button onClick={() => { setProfileOpen(false); navigate("/profile"); }} className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium hover:bg-muted/40 transition-colors text-left text-blue-600 dark:text-blue-400">
+                      <Star className="h-4 w-4" /> Assinar Premium
+                    </button>
+                    
+                    <button onClick={() => { setProfileOpen(false); navigate("/profile"); }} className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium hover:bg-muted/40 transition-colors text-left">
+                      <Settings className="h-4 w-4" /> Acessibilidade & Tema
+                    </button>
+                    
+                    <div className="border-t border-border/60">
+                      <button 
+                        onClick={() => { setProfileOpen(false); signOut(); }} 
+                        className="flex items-center gap-3 w-full px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-500/10 transition-colors text-left"
+                      >
+                        <LogOut className="h-4 w-4" /> Sair da conta
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
@@ -173,7 +221,7 @@ const AppLayout: React.FC = () => {
               exit={{ opacity: 0, y: -10 }}
               className="absolute inset-x-0 top-full bg-card/95 backdrop-blur-xl border-b border-border/60 p-3 flex gap-2 md:hidden shadow-xl"
             >
-              <div className="relative flex-1">
+              <form onSubmit={handleSearchSubmit} className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   autoFocus
@@ -183,7 +231,7 @@ const AppLayout: React.FC = () => {
                   onChange={(e) => setSearchValue(e.target.value)}
                   className="pl-9 rounded-xl h-11 font-medium"
                 />
-              </div>
+              </form>
               <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl" onClick={() => setSearchOpen(false)}>
                 <X className="h-4 w-4" />
               </Button>

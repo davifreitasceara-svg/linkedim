@@ -53,8 +53,8 @@ const Auth: React.FC = () => {
         if (error) throw error;
         toast({ title: "Conta criada!", description: "Verifique seu email para confirmar o cadastro." });
       }
-    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-      let msg = error.message;
+    } catch (error: unknown) {
+      let msg = (error as Error).message;
       if (msg === "Invalid login credentials") msg = "Email ou senha incorretos. Verifique seus dados.";
       else if (msg.includes("Email not confirmed")) msg = "Email não confirmado. Verifique sua caixa de entrada.";
       toast({ title: "Erro", description: msg, variant: "destructive" });
@@ -83,9 +83,9 @@ const Auth: React.FC = () => {
         },
       });
       if (error) throw error;
-    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (error: unknown) {
       console.error("Erro Crítico no Google Auth:", error);
-      let desc = error.message;
+      let desc = (error as Error).message;
       
       if (desc.includes("provider_not_enabled")) {
         desc = "O login com Google não está ativado no Supabase (Authentication -> Providers).";
@@ -129,7 +129,7 @@ const Auth: React.FC = () => {
         description: "Você entrou no modo de demonstração dvscodes.",
       });
       navigate("/");
-    } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (e: unknown) {
       toast({
         title: "Erro no Acesso Direto",
         description: "Para entrar confirme que Email/Senha estão ativos no seu Supabase (Authentication -> Providers).",

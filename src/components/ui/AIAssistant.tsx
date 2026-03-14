@@ -55,12 +55,18 @@ const AIAssistant: React.FC = () => {
       let aiResponse = "Essa é uma excelente pergunta! Deixe-me analisar seu perfil e as tendências do mercado para 2026...";
       
       const lowerInput = input.toLowerCase();
-      if (lowerInput.includes("vaga") || lowerInput.includes("trabalho")) {
-        aiResponse = "Vi que há uma forte demanda para Especialistas em Acessibilidade na dvscodes e no iFood. Ambos valorizam candidatos que entendem de WCAG e UX inclusivo. Quer que eu te mostre como se candidatar?";
-      } else if (lowerInput.includes("perfil") || lowerInput.includes("currículo")) {
-        aiResponse = "Seu perfil está 85% completo. Sugiro adicionar uma descrição mais detalhada de seus projetos de UI/UX para atrair recrutadores da Nubank e Embraer.";
-      } else if (lowerInput.includes("oi") || lowerInput.includes("olá")) {
-        aiResponse = "Olá de novo! Estou pronta para te ajudar. O mercado de tecnologia está aquecido hoje, especialmente em IA e Design de Sistemas.";
+      if (lowerInput.includes("vaga") || lowerInput.includes("trabalho") || lowerInput.includes("emprego")) {
+        aiResponse = "Com base no seu perfil senior, identifiquei 3 vagas estratégicas que deram 'Match':\n1. Tech Lead na dvscodes (Remoto)\n2. Senior Architect no Nubank (Híbrido SP)\n3. UX Specialist na Embraer.\nDeseja que eu prepare uma carta de apresentação personalizada para uma delas?";
+      } else if (lowerInput.includes("perfil") || lowerInput.includes("currículo") || lowerInput.includes("curriculo")) {
+        aiResponse = "Sua análise de perfil dvscodes está pronta: Você pontua 92/100 em 'Liderança Técnica'. Recomendo destacar sua experiência recente com IA Generativa para subir para 98/100. Posso sugerir palavras-chave de alto impacto?";
+      } else if (lowerInput.includes("networking") || lowerInput.includes("conectar") || lowerInput.includes("conversa")) {
+        aiResponse = "Notei que você e o CTO da Nubank têm 12 conexões em comum. Uma abordagem consultiva sobre o novo componente de acessibilidade deles seria um excelente 'quebra-gelo'. Quer que eu redija um convite inteligente?";
+      } else if (lowerInput.includes("ajuda") || lowerInput.includes("como funciona")) {
+        aiResponse = "Posso atuar como seu mentor de carreira 24h. Tente perguntar sobre 'tendências para 2026', 'melhorar perfil' ou peça para eu encontrar vagas específicas.";
+      } else if (lowerInput.includes("oi") || lowerInput.includes("olá") || lowerInput.includes("ola")) {
+        aiResponse = "Olá! Que satisfação falar com um profissional do seu calibre. Em que posso ser útil na sua jornada ProConnect hoje?";
+      } else {
+        aiResponse = "Análise concluída: A sua dúvida envolve visão estratégica. Para 2026, vejo que profissionais com sua senioridade estão focando em 'Human-Centered AI'. Gostaria de saber mais sobre como aplicar isso no seu contexto?";
       }
 
       const aiMsg: Message = {
@@ -206,52 +212,70 @@ const AIAssistant: React.FC = () => {
       </AnimatePresence>
 
       {/* ── TOGGLE BUTTON ── */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "h-16 w-16 rounded-3xl flex items-center justify-center transition-all duration-300 relative group overflow-hidden shadow-2xl shadow-primary/30",
-          isOpen ? "bg-card border border-primary/20" : "bg-primary"
-        )}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        
-        {/* Glow effect */}
-        {!isOpen && (
-          <motion.div
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.5, 0.8, 0.5]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 bg-white/20 rounded-full blur-xl"
-          />
-        )}
-
-        <AnimatePresence mode="wait">
-          {isOpen ? (
+      <div className="relative group">
+        <AnimatePresence>
+          {!isOpen && (
             <motion.div
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="absolute left-20 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-sm font-black border border-white/10 shadow-xl pointer-events-none"
             >
-              <X className="h-7 w-7 text-foreground" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="open"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              className="flex items-center justify-center gap-1"
-            >
-               <Sparkles className="h-8 w-8 text-white animate-pulse" />
+              Pergunte à <span className="text-primary italic">ProAI</span> ✨
+              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 border-8 border-transparent border-marker-right" />
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "h-16 w-16 md:h-20 md:w-20 rounded-[2rem] flex items-center justify-center transition-all duration-300 relative overflow-hidden shadow-2xl",
+            isOpen 
+              ? "bg-card border border-primary/20" 
+              : "bg-gradient-to-br from-primary via-indigo-600 to-blue-700 p-[2px]"
+          )}
+        >
+          {/* Inner ring for non-open state */}
+          {!isOpen && (
+            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-primary via-indigo-600 to-blue-700 flex items-center justify-center">
+               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2),transparent)] opacity-50" />
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                 className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent,white,transparent)]"
+               />
+            </div>
+          )}
+          
+          <AnimatePresence mode="wait">
+            {isOpen ? (
+              <motion.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                className="relative z-10"
+              >
+                <X className="h-8 w-8 text-foreground" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="open"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                className="relative z-10 flex flex-col items-center justify-center"
+              >
+                 <Sparkles className="h-9 w-9 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                 <span className="text-[10px] text-white/80 font-black mt-1 uppercase tracking-widest">AI</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
+      </div>
     </div>
   );
 };
