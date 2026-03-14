@@ -75,12 +75,12 @@ const AIAssistant: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4">
+    <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start gap-4">
       {/* ── CHAT WINDOW ── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20, transformOrigin: "bottom right" }}
+            initial={{ opacity: 0, scale: 0.9, y: 20, transformOrigin: "bottom left" }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="w-[350px] sm:w-[400px] h-[500px] shadow-2xl rounded-3xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-2xl flex flex-col"
